@@ -606,6 +606,7 @@
   @media(max-width:600px){
     #theme-toggle{display:none!important}
     #cur{display:none!important}
+    #ui{display:none!important}
     body{cursor:auto}
     #nav{left:16px;right:16px;transform:none;width:auto;padding:0 8px}
     .nav-cta{order:-1;flex-shrink:0}
@@ -949,11 +950,13 @@
       } catch(_) {}
     }
     let grainInterval;
-    setTimeout(() => {
-      drawGrain();
-      if (!rm) grainInterval = setInterval(drawGrain, 80);
-    }, 120);
-    window.addEventListener('resize', drawGrain, { passive: true });
+    if (window.innerWidth > 600) {
+      setTimeout(() => {
+        drawGrain();
+        if (!rm) grainInterval = setInterval(drawGrain, 80);
+      }, 120);
+      window.addEventListener('resize', drawGrain, { passive: true });
+    }
 
     /* ── hero reveal (called after white transition) ── */
     function revealHero() {
@@ -1038,7 +1041,8 @@
 
     if (window.innerWidth <= 600) {
       vid.style.display = 'none';
-      doReveal();
+      document.body.classList.add('revealed');
+      revealHero();
     } else {
       vid.addEventListener('ended', doReveal);
       vid.play().catch(() => doReveal());
@@ -1305,8 +1309,9 @@
       const renderer = new THREE.WebGLRenderer({ canvas: nc, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       const sync = () => {
-        const cw = navEl.offsetWidth;
-        const ch = navEl.offsetHeight;
+        const rect = wrap.getBoundingClientRect();
+        const cw = Math.round(rect.width) || navEl.offsetWidth;
+        const ch = Math.round(rect.height) || navEl.offsetHeight;
         renderer.setSize(cw, ch);
         uniforms.resolution.value.set(cw, ch);
         uniforms.maxR.value = cw / ch;
