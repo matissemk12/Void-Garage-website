@@ -123,10 +123,6 @@
 
   /* ━━ VIDEO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   #vid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
-  #vid-text{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding-top:18vh;pointer-events:none;opacity:0;transition:opacity 1400ms var(--ease)}
-  #vid-text span{font-family:var(--fb);font-size:clamp(13px,1.3vw,17px);font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:#fff;text-align:center;transition:opacity 200ms}
-  #vid-text:hover span{opacity:.6}
-  body.revealed #vid-text{opacity:0;transition:opacity 1800ms var(--ease);pointer-events:none}
 
   /* ━━ CINEMATIC OVERLAY (grain + vignette) ━━━━━━━━━━━ */
   #ui{position:fixed;inset:0;z-index:20;pointer-events:none;transition:opacity 600ms var(--ease-s)}
@@ -659,10 +655,9 @@
   <div id="wh" aria-hidden="true"></div>
 
   <!-- Video -->
-  <video id="vid" autoplay muted playsinline loop preload="auto" aria-hidden="true" tabindex="-1">
+  <video id="vid" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
     <source src="intro.mp4" type="video/mp4">
   </video>
-  <div id="vid-text" aria-hidden="true"><span id="vt"></span></div>
 
   <!-- Theme toggle -->
   <div id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
@@ -965,39 +960,6 @@
       window.addEventListener('resize', drawGrain, { passive: true });
     }
 
-    /* ── vid text scramble (desktop only) ── */
-    if (window.innerWidth > 600) {
-      const vtEl = document.getElementById('vt');
-      const vtWrap = document.getElementById('vid-text');
-      if (vtEl && vtWrap) {
-        const text = 'Welcome to the Void.';
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-        const steps = 45;
-        const speed = 65;
-        let step = 0;
-        setTimeout(() => {
-          vtWrap.style.opacity = '1';
-          vtWrap.style.pointerEvents = 'auto';
-          vtWrap.style.cursor = 'pointer';
-          vtWrap.addEventListener('click', () => {
-            if (!document.body.classList.contains('revealed')) doReveal();
-          }, { once: true });
-          const iv = setInterval(() => {
-            const progress = step / steps;
-            let out = '';
-            for (let i = 0; i < text.length; i++) {
-              if (text[i] === ' ') { out += ' '; continue; }
-              if (progress * text.length > i) { out += text[i]; }
-              else { out += chars[Math.floor(Math.random() * chars.length)]; }
-            }
-            vtEl.textContent = out;
-            step++;
-            if (step > steps) { clearInterval(iv); vtEl.textContent = text; }
-          }, speed);
-        }, 2500);
-      }
-    }
-
     /* ── hero reveal (called after white transition) ── */
     function revealHero() {
       const he = document.getElementById('he');
@@ -1061,28 +1023,22 @@
 
     /* ── white transition ── */
     function doReveal() {
-      // 0. hold text on screen 1400ms extra, then fade out
-      const vtWrap = document.getElementById('vid-text');
-      setTimeout(() => {
-        if (vtWrap) { vtWrap.style.transition = 'opacity 700ms var(--ease)'; vtWrap.style.opacity = '0'; }
-      }, 3400);
+      // 1. flood white in
+      wh.classList.add('in');
 
-      // 1. flood white in after text has faded
-      setTimeout(() => { wh.classList.add('in'); }, 4100);
-
-      // 2. switch body to white mode
+      // 2. switch body to white mode at 600ms
       setTimeout(() => {
         document.body.classList.add('revealed');
         vid.style.display = 'none';
         if (grainInterval) { clearInterval(grainInterval); grainInterval = null; }
-      }, 4700);
+      }, 600);
 
-      // 3. fade white back out and reveal hero
+      // 3. after white fully in (1200ms), fade it back out and reveal hero
       setTimeout(() => {
         wh.classList.remove('in');
         wh.classList.add('out');
         revealHero();
-      }, 5300);
+      }, 1200);
     }
 
     if (window.innerWidth <= 600) {
@@ -1092,18 +1048,11 @@
       requestAnimationFrame(() => window.scrollTo(0, 0));
       revealHero();
     } else {
-      let revealCalled = false;
-      vid.addEventListener('timeupdate', function onNearEnd() {
-        if (vid.duration && vid.currentTime >= vid.duration - 4 && !revealCalled) {
-          revealCalled = true;
-          vid.removeEventListener('timeupdate', onNearEnd);
-          doReveal();
-        }
-      }, { passive: true });
+      vid.addEventListener('ended', doReveal);
       vid.play().catch(() => doReveal());
       setTimeout(() => {
         if (!document.body.classList.contains('revealed')) doReveal();
-      }, 9000);
+      }, 6000);
     }
 
     /* ── scroll ── */
