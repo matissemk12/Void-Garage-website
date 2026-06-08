@@ -1173,8 +1173,9 @@
       if (!strip || !track || !origSet) return;
 
       /* clone sets until track is wide enough to fill any screen */
-      while (track.scrollWidth < window.innerWidth * 4)
-        track.appendChild(origSet.cloneNode(true));
+      let _c1 = 1;
+      while (_c1 < 4 || track.scrollWidth < window.innerWidth * 4)
+        { track.appendChild(origSet.cloneNode(true)); _c1++; }
 
       const setW = origSet.offsetWidth;
       let x = 0, last = performance.now();
@@ -1196,8 +1197,9 @@
       const origSet = track && track.querySelector('.rv-set');
       if (!section || !track || !origSet) return;
 
-      while (track.scrollWidth < window.innerWidth * 3)
-        track.appendChild(origSet.cloneNode(true));
+      let _c2 = 1;
+      while (_c2 < 4 || track.scrollWidth < window.innerWidth * 4)
+        { track.appendChild(origSet.cloneNode(true)); _c2++; }
 
       /* attach tilt to all cards including clones */
       track.querySelectorAll('.rv-card').forEach(card => {
