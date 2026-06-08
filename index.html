@@ -997,8 +997,8 @@
 
       slider.addEventListener('mousedown',  e => { dragging = true; slider.classList.add('dragging'); setPos(e.clientX); });
       slider.addEventListener('touchstart', e => { dragging = true; slider.classList.add('dragging'); setPos(e.touches[0].clientX); }, { passive: true });
+      slider.addEventListener('touchmove',  e => { if (dragging) { e.preventDefault(); setPos(e.touches[0].clientX); } }, { passive: false });
       window.addEventListener('mousemove',  e => { if (dragging) setPos(e.clientX); });
-      window.addEventListener('touchmove',  e => { if (dragging) setPos(e.touches[0].clientX); }, { passive: true });
       window.addEventListener('mouseup',  () => { dragging = false; slider.classList.remove('dragging'); });
       window.addEventListener('touchend', () => { dragging = false; slider.classList.remove('dragging'); });
 
