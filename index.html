@@ -1044,6 +1044,8 @@
     if (window.innerWidth <= 600) {
       vid.style.display = 'none';
       document.body.classList.add('revealed');
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => window.scrollTo(0, 0));
       revealHero();
     } else {
       vid.addEventListener('ended', doReveal);
