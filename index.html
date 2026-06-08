@@ -605,10 +605,9 @@
   #mob-nav{display:none}
   @media(max-width:600px){
     #theme-toggle{display:none!important}
-    #nav{padding-right:16px}
-    #nav{left:16px;right:16px;transform:none;width:auto;padding-right:84px}
-    .nav-cta{order:-1;flex-shrink:0}
-    .nav-links{display:flex;flex:1;justify-content:center;margin:0;gap:0}
+    #nav{left:16px;right:16px;transform:none;width:auto;padding:0 90px;justify-content:center}
+    .nav-cta{position:absolute;right:8px;top:50%;transform:translateY(-50%);flex-shrink:0}
+    .nav-links{display:flex;align-items:center;justify-content:center;margin:0;gap:0}
     .nav-logo{display:none}
     #nav .glass-tint{background:rgba(0,0,0,.52)!important}
     .nav-link{display:inline-flex;font-size:8.5px;letter-spacing:.1em;padding:0 9px;color:rgba(255,255,255,.7)!important}
@@ -1035,13 +1034,16 @@
       }, 1200);
     }
 
-    vid.addEventListener('ended', doReveal);
-    vid.play().catch(() => doReveal());
-
-    // If video fails to play or load, still reveal after 6s
-    setTimeout(() => {
-      if (!document.body.classList.contains('revealed')) doReveal();
-    }, 6000);
+    if (window.innerWidth <= 600) {
+      vid.style.display = 'none';
+      doReveal();
+    } else {
+      vid.addEventListener('ended', doReveal);
+      vid.play().catch(() => doReveal());
+      setTimeout(() => {
+        if (!document.body.classList.contains('revealed')) doReveal();
+      }, 6000);
+    }
 
     /* ── scroll ── */
     const fill = document.getElementById('fill');
@@ -1056,7 +1058,7 @@
         if (tot > 0) fill.style.width = (sy / tot * 100) + '%';
         document.body.classList.toggle('scrolled', sy > 60);
         document.body.classList.toggle('past-hero', sy > window.innerHeight * 0.75);
-        if (heroInner && sy < window.innerHeight) {
+        if (heroInner && sy < window.innerHeight && window.innerWidth > 600) {
           heroInner.style.transform = `translateY(${sy * 0.28}px)`;
         }
         scrollTick = false;
