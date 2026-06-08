@@ -154,7 +154,7 @@
     opacity:0;transition:opacity 500ms;
   }
   body.revealed #nav-canvas-wrap{opacity:1}
-  #nav-canvas{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+  #nav-canvas{display:block;width:100%;height:100%}
   #nav>*:not(.glass-blur):not(.glass-tint):not(.glass-shine):not(#nav-canvas-wrap){position:relative;z-index:3}
 
   /* ━━ PILL NAV ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -1313,9 +1313,9 @@
       const renderer = new THREE.WebGLRenderer({ canvas: nc, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       const sync = () => {
-        const cw = navEl.offsetWidth;
-        const ch = navEl.offsetHeight;
-        renderer.setSize(cw, ch);
+        const cw = wrap.clientWidth || navEl.offsetWidth;
+        const ch = wrap.clientHeight || navEl.offsetHeight;
+        renderer.setSize(cw, ch, false);
         uniforms.resolution.value.set(cw, ch);
         uniforms.maxR.value = cw / ch;
       };
