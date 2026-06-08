@@ -971,8 +971,8 @@
       if (vtEl && vtWrap) {
         const text = 'Welcome to the Void';
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-        const steps = 30;
-        const speed = 40;
+        const steps = 45;
+        const speed = 65;
         let step = 0;
         setTimeout(() => {
           vtWrap.style.opacity = '1';
@@ -1055,22 +1055,26 @@
 
     /* ── white transition ── */
     function doReveal() {
-      // 1. flood white in
-      wh.classList.add('in');
+      // 0. fade out vid text before anything else
+      const vtWrap = document.getElementById('vid-text');
+      if (vtWrap) { vtWrap.style.transition = 'opacity 700ms var(--ease)'; vtWrap.style.opacity = '0'; }
 
-      // 2. switch body to white mode at 600ms
+      // 1. flood white in after text has faded
+      setTimeout(() => { wh.classList.add('in'); }, 700);
+
+      // 2. switch body to white mode
       setTimeout(() => {
         document.body.classList.add('revealed');
         vid.style.display = 'none';
         if (grainInterval) { clearInterval(grainInterval); grainInterval = null; }
-      }, 600);
+      }, 1300);
 
-      // 3. after white fully in (1200ms), fade it back out and reveal hero
+      // 3. fade white back out and reveal hero
       setTimeout(() => {
         wh.classList.remove('in');
         wh.classList.add('out');
         revealHero();
-      }, 1200);
+      }, 1900);
     }
 
     if (window.innerWidth <= 600) {
