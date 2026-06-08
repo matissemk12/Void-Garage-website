@@ -658,7 +658,7 @@
   <div id="wh" aria-hidden="true"></div>
 
   <!-- Video -->
-  <video id="vid" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+  <video id="vid" autoplay muted playsinline loop preload="auto" aria-hidden="true" tabindex="-1">
     <source src="intro.mp4" type="video/mp4">
   </video>
   <div id="vid-text" aria-hidden="true"><span id="vt"></span></div>
@@ -1086,11 +1086,18 @@
       requestAnimationFrame(() => window.scrollTo(0, 0));
       revealHero();
     } else {
-      vid.addEventListener('ended', doReveal);
+      let revealCalled = false;
+      vid.addEventListener('timeupdate', function onNearEnd() {
+        if (vid.duration && vid.currentTime >= vid.duration - 4 && !revealCalled) {
+          revealCalled = true;
+          vid.removeEventListener('timeupdate', onNearEnd);
+          doReveal();
+        }
+      }, { passive: true });
       vid.play().catch(() => doReveal());
       setTimeout(() => {
         if (!document.body.classList.contains('revealed')) doReveal();
-      }, 6000);
+      }, 9000);
     }
 
     /* ── scroll ── */
