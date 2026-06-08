@@ -988,7 +988,7 @@
             step++;
             if (step > steps) { clearInterval(iv); vtEl.textContent = text; }
           }, speed);
-        }, 3000);
+        }, 2500);
       }
     }
 
@@ -1055,26 +1055,28 @@
 
     /* ── white transition ── */
     function doReveal() {
-      // 0. fade out vid text before anything else
+      // 0. hold text on screen 1400ms extra, then fade out
       const vtWrap = document.getElementById('vid-text');
-      if (vtWrap) { vtWrap.style.transition = 'opacity 700ms var(--ease)'; vtWrap.style.opacity = '0'; }
+      setTimeout(() => {
+        if (vtWrap) { vtWrap.style.transition = 'opacity 700ms var(--ease)'; vtWrap.style.opacity = '0'; }
+      }, 1400);
 
       // 1. flood white in after text has faded
-      setTimeout(() => { wh.classList.add('in'); }, 700);
+      setTimeout(() => { wh.classList.add('in'); }, 2100);
 
       // 2. switch body to white mode
       setTimeout(() => {
         document.body.classList.add('revealed');
         vid.style.display = 'none';
         if (grainInterval) { clearInterval(grainInterval); grainInterval = null; }
-      }, 1300);
+      }, 2700);
 
       // 3. fade white back out and reveal hero
       setTimeout(() => {
         wh.classList.remove('in');
         wh.classList.add('out');
         revealHero();
-      }, 1900);
+      }, 3300);
     }
 
     if (window.innerWidth <= 600) {
