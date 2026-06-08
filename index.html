@@ -1310,6 +1310,12 @@
       const renderer = new THREE.WebGLRenderer({ canvas: nc, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       const sync = () => {
+        const cta = navEl.querySelector('.nav-cta');
+        if (window.innerWidth <= 600 && cta) {
+          wrap.style.left = (cta.offsetWidth + 8) + 'px';
+        } else {
+          wrap.style.left = '0';
+        }
         const rect = wrap.getBoundingClientRect();
         const cw = Math.round(rect.width) || navEl.offsetWidth;
         const ch = Math.round(rect.height) || navEl.offsetHeight;
