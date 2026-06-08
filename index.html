@@ -124,7 +124,8 @@
   /* ━━ VIDEO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   #vid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
   #vid-text{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding-top:18vh;pointer-events:none;opacity:0;transition:opacity 1400ms var(--ease)}
-  #vid-text span{font-family:var(--fb);font-size:clamp(13px,1.3vw,17px);font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:#fff;text-align:center}
+  #vid-text span{font-family:var(--fb);font-size:clamp(13px,1.3vw,17px);font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:#fff;text-align:center;transition:opacity 200ms}
+  #vid-text:hover span{opacity:.6}
   body.revealed #vid-text{opacity:0;transition:opacity 1800ms var(--ease);pointer-events:none}
 
   /* ━━ CINEMATIC OVERLAY (grain + vignette) ━━━━━━━━━━━ */
@@ -976,6 +977,11 @@
         let step = 0;
         setTimeout(() => {
           vtWrap.style.opacity = '1';
+          vtWrap.style.pointerEvents = 'auto';
+          vtWrap.style.cursor = 'pointer';
+          vtWrap.addEventListener('click', () => {
+            if (!document.body.classList.contains('revealed')) doReveal();
+          }, { once: true });
           const iv = setInterval(() => {
             const progress = step / steps;
             let out = '';
