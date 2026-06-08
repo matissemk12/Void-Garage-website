@@ -98,7 +98,7 @@
 
   /* ━━ RESET ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden}
   body{
     font-family:var(--fb);
     background:#000;
@@ -108,7 +108,7 @@
     overflow-y:hidden;
     -webkit-font-smoothing:antialiased;
   }
-  body.revealed{background:var(--bg);overflow-y:auto}
+  body.revealed{background:var(--bg);overflow-y:auto;overflow-x:hidden}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
   :focus-visible{outline:2px solid #000;outline-offset:3px;border-radius:2px}
 
