@@ -605,12 +605,14 @@
   #mob-nav{display:none}
   @media(max-width:600px){
     #theme-toggle{display:none!important}
-    #nav{left:16px;right:16px;transform:none;width:auto;padding:0 90px;justify-content:center}
-    .nav-cta{position:absolute;right:8px;top:50%;transform:translateY(-50%);flex-shrink:0}
-    .nav-links{display:flex;align-items:center;justify-content:center;margin:0;gap:0}
+    #cur{display:none!important}
+    body{cursor:auto}
+    #nav{left:16px;right:16px;transform:none;width:auto;padding:0 8px}
+    .nav-cta{order:-1;flex-shrink:0}
+    .nav-links{flex:1;display:flex;align-items:center;justify-content:space-evenly;margin:0;gap:0}
     .nav-logo{display:none}
     #nav .glass-tint{background:rgba(0,0,0,.52)!important}
-    .nav-link{display:inline-flex;font-size:8.5px;letter-spacing:.1em;padding:0 9px;color:rgba(255,255,255,.7)!important}
+    .nav-link{display:inline-flex;font-size:8.5px;letter-spacing:.1em;padding:0 6px;color:rgba(255,255,255,.7)!important}
     .nav-link:hover,.nav-link.active{color:#fff!important}
     .nav-link.active{background:rgba(255,255,255,.12)}
     .mob-only{display:inline-flex}
@@ -1310,6 +1312,8 @@
         uniforms.maxR.value = cw / ch;
       };
       sync();
+      setTimeout(sync, 300);
+      setTimeout(sync, 1500);
       window.addEventListener('resize', sync);
       window.addEventListener('load', sync);
       new ResizeObserver(sync).observe(navEl);
