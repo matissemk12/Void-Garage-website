@@ -123,6 +123,9 @@
 
   /* ━━ VIDEO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   #vid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  #vid-text{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity 800ms var(--ease)}
+  #vid-text span{font-family:var(--fd);font-size:clamp(28px,4vw,64px);font-weight:300;font-style:italic;color:#fff;letter-spacing:.04em;text-align:center}
+  body.revealed #vid-text{opacity:0;pointer-events:none}
 
   /* ━━ CINEMATIC OVERLAY (grain + vignette) ━━━━━━━━━━━ */
   #ui{position:fixed;inset:0;z-index:20;pointer-events:none;transition:opacity 600ms var(--ease-s)}
@@ -658,6 +661,7 @@
   <video id="vid" autoplay muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
     <source src="intro.mp4" type="video/mp4">
   </video>
+  <div id="vid-text" aria-hidden="true"><span id="vt"></span></div>
 
   <!-- Theme toggle -->
   <div id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
@@ -958,6 +962,34 @@
         if (!rm) grainInterval = setInterval(drawGrain, 80);
       }, 120);
       window.addEventListener('resize', drawGrain, { passive: true });
+    }
+
+    /* ── vid text scramble (desktop only) ── */
+    if (window.innerWidth > 600) {
+      const vtEl = document.getElementById('vt');
+      const vtWrap = document.getElementById('vid-text');
+      if (vtEl && vtWrap) {
+        const text = 'Welcome to the Void';
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        const steps = 30;
+        const speed = 40;
+        let step = 0;
+        setTimeout(() => {
+          vtWrap.style.opacity = '1';
+          const iv = setInterval(() => {
+            const progress = step / steps;
+            let out = '';
+            for (let i = 0; i < text.length; i++) {
+              if (text[i] === ' ') { out += ' '; continue; }
+              if (progress * text.length > i) { out += text[i]; }
+              else { out += chars[Math.floor(Math.random() * chars.length)]; }
+            }
+            vtEl.textContent = out;
+            step++;
+            if (step > steps) { clearInterval(iv); vtEl.textContent = text; }
+          }, speed);
+        }, 900);
+      }
     }
 
     /* ── hero reveal (called after white transition) ── */
