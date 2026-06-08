@@ -1059,24 +1059,24 @@
       const vtWrap = document.getElementById('vid-text');
       setTimeout(() => {
         if (vtWrap) { vtWrap.style.transition = 'opacity 700ms var(--ease)'; vtWrap.style.opacity = '0'; }
-      }, 2600);
+      }, 3400);
 
       // 1. flood white in after text has faded
-      setTimeout(() => { wh.classList.add('in'); }, 3300);
+      setTimeout(() => { wh.classList.add('in'); }, 4100);
 
       // 2. switch body to white mode
       setTimeout(() => {
         document.body.classList.add('revealed');
         vid.style.display = 'none';
         if (grainInterval) { clearInterval(grainInterval); grainInterval = null; }
-      }, 3900);
+      }, 4700);
 
       // 3. fade white back out and reveal hero
       setTimeout(() => {
         wh.classList.remove('in');
         wh.classList.add('out');
         revealHero();
-      }, 4500);
+      }, 5300);
     }
 
     if (window.innerWidth <= 600) {
