@@ -608,6 +608,7 @@
     #cur{display:none!important}
     #ui{display:none!important}
     #vid{display:none!important}
+    #nav-canvas-wrap{display:none!important}
     body{cursor:auto}
     #nav{left:16px;right:16px;transform:none;width:auto;padding:0 8px}
     .nav-cta{order:-1;flex-shrink:0}
@@ -1273,7 +1274,7 @@
   })();
   </script>
   <script>
-  if (typeof THREE !== 'undefined') {
+  if (typeof THREE !== 'undefined' && window.innerWidth > 600) {
     const nc = document.getElementById('nav-canvas');
     const wrap = document.getElementById('nav-canvas-wrap');
     const navEl = document.getElementById('nav');
