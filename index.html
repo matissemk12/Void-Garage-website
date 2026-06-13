@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Void Garage Cleaning</title>
   <meta name="description" content="Fast, efficient garage cleanouts. Local & independently owned. Starting at $699 per truckload.">
+  <link rel="preload" as="image" href="before.webp" type="image/webp">
+  <link rel="preload" as="image" href="after.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -729,10 +731,10 @@
       <div class="hero-slider-wrap" id="heroSliderWrap">
         <div class="hero-slider" id="heroSlider">
           <!-- Before (cluttered) — base layer -->
-          <img class="slider-base" src="hf_20260608_051532_18d55964-bca1-4124-913b-3fba120182fc.png" alt="Before — cluttered garage" draggable="false">
+          <img class="slider-base" src="before.webp" alt="Before — cluttered garage" draggable="false" fetchpriority="high">
           <!-- After (clean) — clipped top layer -->
           <div class="slider-after-clip" id="sliderAfterClip" style="clip-path:inset(0 0 0 50%)">
-            <img src="hf_20260608_051730_0debc452-7fc0-4f37-a5fe-35b22f0a059c.png" alt="After — clean garage" draggable="false">
+            <img src="after.webp" alt="After — clean garage" draggable="false" fetchpriority="high">
           </div>
           <!-- Divider line + handle -->
           <div class="slider-line" id="sliderLine" style="left:50%">
