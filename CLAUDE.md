@@ -86,8 +86,18 @@ create policy "public insert visits" on visits for insert to anon with check (tr
 create policy "public insert events" on events for insert to anon with check (true);
 ```
 
-### 8. Commit and push when done
-Always `git add`, `git commit`, and `git push` after all changes are made.
+### 8. Set up fresh Git repo and push to GitHub
+This folder was duplicated from a template so the old git history needs to be replaced.
+Run these commands in order:
+```
+Remove-Item -Recurse -Force .git
+git init
+git add .
+git commit -m "Initial client site — [business name]"
+gh repo create [repo-name] --public --source=. --push
+```
+Replace `[repo-name]` with something like `mikes-garage-website`.
+If `gh` CLI is not available, tell the user to create the GitHub repo manually and provide the remote URL.
 
 ---
 
