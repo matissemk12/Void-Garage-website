@@ -616,13 +616,24 @@
     .nav-cta{order:-1;flex-shrink:0}
     .nav-links{flex:1;display:flex;align-items:center;justify-content:space-evenly;margin:0;gap:0}
     .nav-logo{display:none}
-    #nav .glass-tint{background:#000!important}
+    #nav .glass-tint{background:#000!important;overflow:hidden}
+    #nav .glass-tint::before{content:'';position:absolute;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.09) 0%,transparent 70%);pointer-events:none;animation:nav-orb 6s ease-in-out infinite}
+    @keyframes nav-orb{0%,100%{transform:translate(-10%,30%)}33%{transform:translate(70%,-10%)}66%{transform:translate(40%,80%)}}
     .nav-link{display:inline-flex;font-size:8.5px;letter-spacing:.1em;padding:0 6px;color:rgba(255,255,255,.7)!important}
     .nav-link:hover,.nav-link.active{color:#fff!important}
     .nav-link.active{background:rgba(255,255,255,.12)}
     .mob-only{display:inline-flex}
     .hero-ctas{flex-direction:column;align-items:flex-start}
   }
+  /* ━━ MOBILE INTRO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  #mob-intro{position:fixed;inset:0;background:#000;z-index:45;display:none;flex-direction:column;align-items:center;justify-content:center;gap:0}
+  @media(max-width:600px){#mob-intro{display:flex}}
+  body.revealed #mob-intro{display:none!important}
+  .mi-clip{overflow:hidden;line-height:1}
+  .mi-word{display:block;font-family:var(--fb);font-size:clamp(52px,18vw,80px);font-weight:600;letter-spacing:.1em;color:#fff;transform:translateY(110%);transition:transform .75s cubic-bezier(.16,1,.3,1)}
+  .mi-word.v{transform:translateY(0)}
+  .mi-sub{font-family:var(--fb);font-size:10px;letter-spacing:.38em;color:rgba(255,255,255,.3);margin-top:18px;opacity:0;transition:opacity .9s ease}
+  .mi-sub.v{opacity:1}
   </style>
 </head>
 <body>
@@ -655,6 +666,13 @@
 
   <!-- White flood transition -->
   <div id="wh" aria-hidden="true"></div>
+
+  <!-- Mobile cinematic intro -->
+  <div id="mob-intro" aria-hidden="true">
+    <div class="mi-clip"><span class="mi-word" id="miw1">VOID</span></div>
+    <div class="mi-clip"><span class="mi-word" id="miw2">GARAGE</span></div>
+    <p class="mi-sub" id="misub">CLEANING</p>
+  </div>
 
   <!-- Video -->
   <video id="vid" autoplay muted playsinline preload="auto" loop aria-hidden="true" tabindex="-1">
@@ -1046,10 +1064,22 @@
 
     if (window.innerWidth <= 600) {
       vid.style.display = 'none';
-      document.body.classList.add('revealed');
       window.scrollTo(0, 0);
-      requestAnimationFrame(() => window.scrollTo(0, 0));
-      revealHero();
+      const miw1 = document.getElementById('miw1');
+      const miw2 = document.getElementById('miw2');
+      const misub = document.getElementById('misub');
+      let mobDone = false;
+      function doMobReveal() {
+        if (mobDone) return;
+        mobDone = true;
+        document.removeEventListener('click', doMobReveal);
+        doReveal();
+      }
+      setTimeout(() => miw1 && miw1.classList.add('v'), 300);
+      setTimeout(() => miw2 && miw2.classList.add('v'), 600);
+      setTimeout(() => misub && misub.classList.add('v'), 1050);
+      setTimeout(doMobReveal, 2700);
+      document.addEventListener('click', doMobReveal, { once: true });
     } else {
       let revealCalled = false;
       vid.addEventListener('timeupdate', function onNearEnd() {
@@ -1109,7 +1139,9 @@
 
     /* ── IO reveals (sections below fold) ── */
     const io = new IntersectionObserver(entries => {
-      entries.forEach(e => e.target.classList.toggle('v', e.isIntersecting));
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('v'); io.unobserve(e.target); }
+      });
     }, { threshold: 0.08 });
 
     document.querySelectorAll('[data-r],[data-sl],[data-sr]').forEach(el => io.observe(el));
@@ -1119,24 +1151,12 @@
       const section = document.getElementById('process');
       const steps   = document.querySelectorAll('.process-step');
       if (!section || !steps.length) return;
-      let timers = [];
-      new IntersectionObserver(([e]) => {
-        timers.forEach(clearTimeout); timers = [];
-        if (e.isIntersecting) {
-          steps.forEach((s, i) => {
-            timers.push(setTimeout(() => {
-              s.classList.add('v');
-              s.addEventListener('animationend', () => s.classList.replace('v', 'done'), { once: true });
-            }, i * 420));
-          });
-        } else {
-          steps.forEach(s => {
-            s.classList.remove('v', 'done');
-            s.style.transform = '';
-            s.style.transition = '';
-          });
-        }
-      }, { threshold: 0.2 }).observe(section);
+      const stepIO = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        stepIO.disconnect();
+        steps.forEach((s, i) => setTimeout(() => s.classList.add('v'), i * 420));
+      }, { threshold: 0.2 });
+      stepIO.observe(section);
     })();
 
     /* ── select label ── */
