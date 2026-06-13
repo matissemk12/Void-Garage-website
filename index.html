@@ -442,6 +442,7 @@
   .card-price{
     font-family:var(--fd);font-size:clamp(40px,4vw,64px);font-weight:300;
     color:#000;letter-spacing:-.03em;line-height:1;
+    font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
   }
   .card-sub{font-size:10px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:rgba(0,0,0,.4);margin-top:6px}
 
@@ -1172,11 +1173,16 @@
         done = true;
         cio.disconnect();
         const dur = 1100, t0 = performance.now();
+        // start at the lowest number with the same digit count as target
+        // so digit-count never changes mid-animation (no layout shift)
+        const startVal = Math.pow(10, String(target).length - 1);
         function tick(now) {
           const p = Math.min((now - t0) / dur, 1);
           const eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = prefix + Math.round(eased * target);
+          const cur = Math.round(startVal + eased * (target - startVal));
+          el.textContent = prefix + cur;
           if (p < 1) requestAnimationFrame(tick);
+          else el.textContent = prefix + target;
         }
         requestAnimationFrame(tick);
       }, { threshold: 0.6 });
