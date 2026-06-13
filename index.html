@@ -1078,7 +1078,12 @@
         mobDone = true;
         document.removeEventListener('click', doMobReveal);
         wh.classList.add('in');
-        setTimeout(() => { document.body.classList.add('revealed'); window.scrollTo(0, 0); }, 540);
+        setTimeout(() => {
+          document.body.classList.add('revealed');
+          window.scrollTo(0, 0);
+          const mi = document.getElementById('mob-intro');
+          if (mi) mi.style.display = 'none';
+        }, 540);
         setTimeout(() => {
           wh.classList.remove('in');
           wh.classList.add('out');
