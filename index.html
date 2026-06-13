@@ -136,6 +136,11 @@
   #wh{position:fixed;inset:0;background:#fff;z-index:50;opacity:0;pointer-events:none;transition:opacity 1100ms ease-in}
   #wh.in{opacity:1}
   #wh.out{opacity:0;transition:opacity 500ms var(--ease-s)}
+  @media(max-width:600px){
+    #wh{opacity:1!important;transform:translateY(100%);transition:transform .52s cubic-bezier(.65,0,.35,1)!important}
+    #wh.in{transform:translateY(0)}
+    #wh.out{transform:translateY(-100%);transition:transform .52s cubic-bezier(.65,0,.35,1)!important}
+  }
 
   /* ━━ LIQUID GLASS LAYERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .glass-blur{position:absolute;inset:0;border-radius:inherit;z-index:0}
