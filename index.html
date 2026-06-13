@@ -1507,5 +1507,24 @@
       document.querySelectorAll('.mso').forEach(el => el.addEventListener('click', close));
     })();
   </script>
+
+  <script>
+    /* Secret 5-tap on logo → analytics dashboard */
+    (function(){
+      const logo = document.querySelector('.nav-logo');
+      if (!logo) return;
+      let taps = 0, timer;
+      logo.addEventListener('click', function(e){
+        taps++;
+        clearTimeout(timer);
+        if (taps >= 5) {
+          taps = 0;
+          window.open('/analytics.html?key=void2024', '_blank');
+        } else {
+          timer = setTimeout(() => { taps = 0; }, 1800);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
