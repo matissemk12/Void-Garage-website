@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Analytics — Void Garage Cleaning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── CONFIG DEFAULTS ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070707;
+  --s1:#0f0f0f;
+  --s2:#161616;
+  --b1:rgba(255,255,255,.06);
+  --b2:rgba(255,255,255,.12);
+  --t1:#fff;
+  --t2:rgba(255,255,255,.52);
+  --t3:rgba(255,255,255,.26);
+  --green:#6ee7b7;
+  --red:#fca5a5;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'Space Grotesk',system-ui,sans-serif;
+  --r:13px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html,body{
+  background:var(--bg);color:var(--t1);font-family:var(--fb);
+  font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+
+/* ── GRAIN ───────────────────────────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.022;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:190px 190px;
+}
+
+/* ── LOCK ────────────────────────────────────────────────────── */
+#lock{
+  position:fixed;inset:0;z-index:999;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+}
+.lk{width:300px;text-align:center}
+.lk-logo{
+  font-size:10px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--t1);margin-bottom:6px;
+}
+.lk-sub{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:52px;
+}
+.lk-in{
+  width:100%;background:var(--s1);border:1px solid var(--b2);
+  border-radius:10px;padding:14px 18px;color:var(--t1);
+  font-family:var(--fb);font-size:14px;outline:none;
+  text-align:center;letter-spacing:.1em;
+  transition:border-color 200ms;margin-bottom:10px;
+}
+.lk-in:focus{border-color:rgba(255,255,255,.3)}
+.lk-in::placeholder{color:var(--t3)}
+.lk-btn{
+  width:100%;padding:14px;background:#fff;color:#000;border:none;
+  border-radius:10px;font-family:var(--fb);font-size:11px;
+  font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;transition:opacity 150ms;
+}
+.lk-btn:hover{opacity:.82}
+.lk-err{
+  font-size:12px;color:var(--red);margin-top:14px;
+  opacity:0;transition:opacity 200ms;
+}
+.lk-err.show{opacity:1}
+
+/* ── DASHBOARD ───────────────────────────────────────────────── */
+#dash{
+  position:relative;z-index:1;
+  max-width:1400px;margin:0 auto;padding:0 40px 80px;
+}
+
+/* header */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 0;border-bottom:1px solid var(--b1);margin-bottom:26px;
+}
+.h-l{display:flex;align-items:center}
+.h-mark{font-size:10px;font-weight:600;letter-spacing:.34em;text-transform:uppercase}
+.h-sep{width:1px;height:14px;background:var(--b2);margin:0 18px}
+.h-biz{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)}
+.h-r{display:flex;align-items:center;gap:22px}
+.h-live{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--t2)}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:livepulse 2.2s ease-in-out infinite;
+}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
+.h-ts{font-size:11px;color:var(--t3)}
+.period-sel{
+  background:var(--s1);border:1px solid var(--b2);border-radius:8px;
+  color:var(--t1);font-family:var(--fb);font-size:12px;
+  padding:7px 30px 7px 12px;outline:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.38)' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  transition:border-color 200ms;
+}
+.period-sel:hover{border-color:rgba(255,255,255,.22)}
+
+/* ga note */
+.ga-note{
+  background:rgba(255,190,0,.06);border:1px solid rgba(255,190,0,.14);
+  border-radius:8px;padding:10px 16px;
+  font-size:11px;color:rgba(255,200,80,.65);
+  margin-bottom:22px;letter-spacing:.04em;
+}
+
+/* ── STAT CARDS ──────────────────────────────────────────────── */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:13px;
+}
+.sc{
+  background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);
+  padding:22px 24px 20px;position:relative;overflow:hidden;
+  transition:background 200ms,border-color 200ms;
+  opacity:0;transform:translateY(14px);
+}
+#dash.ready .sc{opacity:1;transform:translateY(0)}
+#dash.ready .sc:nth-child(1){transition:opacity .5s var(--ease) .04s,transform .5s var(--ease) .04s,background 200ms,border-color 200ms}
+#dash.ready .sc:nth-child(2){transition:opacity .5s var(--ease) .1s,transform .5s var(--ease) .1s,background 200ms,border-color 200ms}
+#dash.ready .sc:nth-child(3){transition:opacity .5s var(--ease) .16s,transform .5s var(--ease) .16s,background 200ms,border-color 200ms}
+#dash.ready .sc:nth-child(4){transition:opacity .5s var(--ease) .22s,transform .5s var(--ease) .22s,background 200ms,border-color 200ms}
+.sc::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.1) 50%,transparent);
+}
+.sc:hover{background:var(--s2);border-color:var(--b2)}
+.sc-label{
+  font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:16px;
+}
+.sc-val{
+  font-family:var(--fd);font-size:56px;font-weight:300;
+  line-height:.88;color:var(--t1);margin-bottom:14px;letter-spacing:-.01em;
+}
+.sc-delta{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:500;
+}
+.sc-delta.pos{color:var(--green)}
+.sc-delta.neg{color:var(--red)}
+.sc-sub{font-size:11px;color:var(--t3);margin-top:4px}
+
+/* ── CHART CARDS ─────────────────────────────────────────────── */
+.chart-row{
+  display:grid;grid-template-columns:1fr 310px;gap:13px;margin-bottom:13px;
+}
+.chart-full{margin-bottom:13px}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+
+.cc{
+  background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);
+  padding:24px 26px;
+  opacity:0;transform:translateY(14px);
+}
+#dash.ready .cc{
+  opacity:1;transform:translateY(0);
+  transition:opacity .55s var(--ease) .28s,transform .55s var(--ease) .28s;
+}
+.cc-hd{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;
+}
+.cc-title{
+  font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);
+}
+.cc-total{font-size:12px;color:var(--t2)}
+
+/* chart wrapper for controlled height */
+.ch-wrap{position:relative;height:220px}
+.ch-wrap-sm{position:relative;height:160px}
+canvas{display:block;width:100%!important;height:100%!important}
+
+/* ── DONUT ───────────────────────────────────────────────────── */
+.donut-wrap{position:relative;width:164px;height:164px;margin:0 auto 22px}
+.donut-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;
+}
+.dc-val{font-family:var(--fd);font-size:30px;font-weight:300;line-height:1}
+.dc-lbl{font-size:10px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+
+/* ── SOURCES LEGEND ──────────────────────────────────────────── */
+.src-item{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 0;border-bottom:1px solid var(--b1);
+}
+.src-item:last-child{border-bottom:none}
+.src-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.src-name{font-size:13px;color:var(--t2);flex:1}
+.src-ct{font-size:12px;color:var(--t3);min-width:42px;text-align:right}
+.src-pct{font-size:13px;color:var(--t1);font-weight:500;min-width:36px;text-align:right}
+
+/* ── REFERRERS ───────────────────────────────────────────────── */
+.ref-item{display:flex;align-items:center;gap:11px;margin-bottom:15px}
+.ref-item:last-child{margin-bottom:0}
+.ref-rank{font-size:11px;color:var(--t3);width:14px;flex-shrink:0}
+.ref-name{font-size:13px;color:var(--t2);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ref-bar-wrap{width:72px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;flex-shrink:0}
+.ref-bar{height:100%;background:rgba(255,255,255,.32);border-radius:2px;width:0;transition:width .9s var(--ease)}
+.ref-pct{font-size:12px;color:var(--t3);width:30px;text-align:right;flex-shrink:0}
+
+/* ── DEVICES + BEST DAY ──────────────────────────────────────── */
+.dev-item{margin-bottom:18px}
+.dev-item:last-child{margin-bottom:0}
+.dev-hd{display:flex;justify-content:space-between;margin-bottom:8px}
+.dev-label{font-size:13px;color:var(--t2)}
+.dev-pct{font-size:13px;color:var(--t1);font-weight:500}
+.dev-bar-wrap{height:5px;background:rgba(255,255,255,.06);border-radius:3px}
+.dev-bar{height:100%;border-radius:3px;width:0;transition:width .9s var(--ease)}
+.dev-divider{height:1px;background:var(--b1);margin:22px 0}
+.best-day-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.best-day-val{font-family:var(--fd);font-size:28px;font-weight:300;color:var(--t1)}
+.best-day-sub{font-size:11px;color:var(--t3);margin-top:3px}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer{
+  display:flex;justify-content:space-between;
+  margin-top:36px;padding-top:18px;border-top:1px solid var(--b1);
+  font-size:11px;color:var(--t3);letter-spacing:.06em;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media(max-width:900px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-row{grid-template-columns:1fr}
+  .bottom-row{grid-template-columns:1fr}
+  #dash{padding:0 20px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOCK SCREEN ════════════════════════════════════════════ -->
+<div id="lock">
+  <div class="lk">
+    <div class="lk-logo">◼ Void</div>
+    <div class="lk-sub">Analytics Dashboard</div>
+    <input id="lk-in" class="lk-in" type="password" placeholder="Enter access key" autocomplete="off">
+    <button id="lk-btn" class="lk-btn">Unlock Dashboard</button>
+    <p id="lk-err" class="lk-err">Incorrect access key</p>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══════════════════════════════════════════════ -->
+<div id="dash" style="display:none">
+
+  <header>
+    <div class="h-l">
+      <span class="h-mark">◼ Void</span>
+      <span class="h-sep"></span>
+      <span class="h-biz" id="h-biz">Analytics</span>
+    </div>
+    <div class="h-r">
+      <span class="h-live"><span class="live-dot"></span>Live</span>
+      <select id="period-sel" class="period-sel">
+        <option value="7">Last 7 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <span class="h-ts" id="h-ts"></span>
+    </div>
+  </header>
+
+  <div class="ga-note" id="ga-note">
+    ⚡ Displaying representative data — connect GA4 to activate live analytics. Set <code>ga4PropertyId</code> in CONFIG.
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-grid">
+    <div class="sc">
+      <div class="sc-label">Total Visitors</div>
+      <div class="sc-val" id="sv-v">—</div>
+      <div class="sc-delta" id="sd-v"></div>
+      <div class="sc-sub">vs prior period</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Book Now Clicks</div>
+      <div class="sc-val" id="sv-c">—</div>
+      <div class="sc-delta" id="sd-c"></div>
+      <div class="sc-sub">vs prior period</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Conversion Rate</div>
+      <div class="sc-val" id="sv-r">—</div>
+      <div class="sc-delta" id="sd-r"></div>
+      <div class="sc-sub">visitors → booking click</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">Growth vs Prior Period</div>
+      <div class="sc-val" id="sv-g">—</div>
+      <div class="sc-sub" id="ss-g">visitor growth</div>
+    </div>
+  </div>
+
+  <!-- CHART ROW: visitor trend + traffic sources -->
+  <div class="chart-row">
+    <div class="cc">
+      <div class="cc-hd">
+        <span class="cc-title">Visitor Trend</span>
+        <span class="cc-total" id="ct-v"></span>
+      </div>
+      <div class="ch-wrap"><canvas id="chart-v"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cc-hd">
+        <span class="cc-title">Traffic Sources</span>
+      </div>
+      <div class="donut-wrap">
+        <canvas id="chart-src"></canvas>
+        <div class="donut-center">
+          <div class="dc-val" id="dc-total">—</div>
+          <div class="dc-lbl">visits</div>
+        </div>
+      </div>
+      <div id="src-legend"></div>
+    </div>
+  </div>
+
+  <!-- BOOK CLICKS CHART -->
+  <div class="cc chart-full">
+    <div class="cc-hd">
+      <span class="cc-title">Book Now Clicks — Daily</span>
+      <span class="cc-total" id="ct-c"></span>
+    </div>
+    <div class="ch-wrap-sm"><canvas id="chart-c"></canvas></div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+    <div class="cc">
+      <div class="cc-hd"><span class="cc-title">Top Referrers</span></div>
+      <div id="ref-list"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-hd"><span class="cc-title">Device Split</span></div>
+      <div id="dev-list"></div>
+      <div class="dev-divider"></div>
+      <div class="best-day-lbl">Peak Traffic Day</div>
+      <div class="best-day-val" id="best-day">—</div>
+      <div class="best-day-sub" id="best-day-sub"></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>◼ Void Analytics &nbsp;·&nbsp; <span id="f-biz"></span></span>
+    <span>Data refreshes on each visit</span>
+  </footer>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIG — change these per client
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+  businessName: "Void Garage Cleaning",
+  dashKey:      "void2024",
+  ga4Id:        "",        // e.g. "G-XXXXXXXXXX" — add after GA4 setup
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA — 90 days (index 0 = 90 days ago, index 89 = yesterday)
+// ═══════════════════════════════════════════════════════════════
+const ALL_V = [
+  3,6,8,5,7,10,2,
+  4,8,7,10,8,6,3,
+  5,9,12,9,7,5,4,
+  7,11,13,10,8,6,5,
+  9,13,15,12,10,7,6,
+  11,15,17,14,12,8,7,
+  13,17,19,16,13,9,8,
+  14,19,21,18,14,10,9,
+  16,21,23,20,16,11,10,
+  18,24,26,22,18,13,11,
+  20,26,29,24,20,14,12,
+  22,28,31,27,22,16,14,
+  25,32,35,29,26,18,
+];
+
+const ALL_C = [
+  0,0,0,0,0,1,0,
+  0,0,0,1,0,0,0,
+  0,1,1,1,0,0,0,
+  0,1,1,1,1,0,0,
+  1,1,1,1,1,0,0,
+  1,1,1,1,1,1,0,
+  1,1,1,1,1,1,1,
+  1,1,2,1,1,1,1,
+  1,2,2,1,1,1,1,
+  1,2,2,2,1,1,1,
+  1,2,3,2,1,1,1,
+  2,2,3,2,2,1,1,
+  2,3,3,2,2,1,
+];
+
+const SOURCES = {
+  labels: ['Direct','Google','Social','Referral'],
+  data:   [38, 31, 22, 9],
+  colors: [
+    'rgba(255,255,255,.9)',
+    'rgba(255,255,255,.52)',
+    'rgba(255,255,255,.26)',
+    'rgba(255,255,255,.1)',
+  ],
+};
+
+const REFERRERS = [
+  { name:'direct / typed URL', pct:38 },
+  { name:'google.com',         pct:31 },
+  { name:'instagram.com',      pct:14 },
+  { name:'facebook.com',       pct:9  },
+  { name:'nextdoor.com',       pct:8  },
+];
+
+const DEVICES = [
+  { label:'Mobile',  pct:68, color:'rgba(255,255,255,.55)' },
+  { label:'Desktop', pct:32, color:'rgba(255,255,255,.2)'  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════════
+const sum = arr => arr.reduce((a,b)=>a+b,0);
+
+function getSlice(days) {
+  return {
+    visitors: ALL_V.slice(-days),
+    clicks:   ALL_C.slice(-days),
+  };
+}
+
+function getLabels(days) {
+  const labels = [], now = new Date();
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    if (days <= 7)       labels.push(d.toLocaleDateString('en-US',{weekday:'short'}));
+    else if (days <= 30) labels.push(d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+    else                 labels.push(i % 14 === 0 ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '');
+  }
+  return labels;
+}
+
+function getBestDay(days) {
+  const visitors = ALL_V.slice(-days);
+  const totals = [0,0,0,0,0,0,0], counts = [0,0,0,0,0,0,0];
+  const now = new Date();
+  visitors.forEach((v,i) => {
+    const d = new Date(now); d.setDate(d.getDate()-(days-1-i));
+    totals[d.getDay()] += v; counts[d.getDay()]++;
+  });
+  const avgs = totals.map((t,i) => counts[i]>0 ? t/counts[i] : 0);
+  const best = avgs.indexOf(Math.max(...avgs));
+  return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][best];
+}
+
+function animNum(el, target, {suf='',dec=0,dur=750}={}) {
+  const n = parseFloat(target);
+  const t0 = performance.now();
+  const tick = now => {
+    const p = Math.min((now-t0)/dur, 1);
+    const e = 1 - Math.pow(1-p, 3);
+    const v = n * e;
+    el.textContent = (dec ? v.toFixed(dec) : Math.round(v).toLocaleString()) + suf;
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════════════════
+let cV, cSrc, cC;
+
+const TOOLTIP = {
+  backgroundColor:'#1c1c1c',
+  borderColor:'rgba(255,255,255,.1)',
+  borderWidth:1,
+  titleColor:'rgba(255,255,255,.45)',
+  bodyColor:'#fff',
+  padding:12,
+  cornerRadius:8,
+  displayColors:false,
+};
+
+function buildVisitorChart(labels, data) {
+  if (cV) cV.destroy();
+  cV = new Chart(document.getElementById('chart-v').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data,
+        backgroundColor:'rgba(255,255,255,.07)',
+        hoverBackgroundColor:'rgba(255,255,255,.75)',
+        borderRadius:4,
+        borderSkipped:false,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw.toLocaleString()} visitors` } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} },
+        y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5}, border:{display:false} },
+      },
+    },
+  });
+}
+
+function buildSourcesChart() {
+  if (cSrc) cSrc.destroy();
+  cSrc = new Chart(document.getElementById('chart-src').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels: SOURCES.labels,
+      datasets:[{
+        data: SOURCES.data,
+        backgroundColor: SOURCES.colors,
+        borderColor:'#0f0f0f',
+        borderWidth:3,
+        hoverOffset:6,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'74%',
+      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ label:i=>`${i.label}: ${i.raw}%` } } },
+    },
+  });
+}
+
+function buildClicksChart(labels, data) {
+  if (cC) cC.destroy();
+  cC = new Chart(document.getElementById('chart-c').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data,
+        backgroundColor:'rgba(110,231,183,.12)',
+        hoverBackgroundColor:'rgba(110,231,183,.65)',
+        borderRadius:4,
+        borderSkipped:false,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw} click${i[0].raw!==1?'s':''}` } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} },
+        y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5,stepSize:1}, border:{display:false} },
+      },
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════
+function renderSources(total) {
+  document.getElementById('dc-total').textContent = total.toLocaleString();
+  document.getElementById('src-legend').innerHTML = SOURCES.labels.map((lbl,i) => {
+    const ct = Math.round(total * SOURCES.data[i] / 100);
+    return `<div class="src-item">
+      <span class="src-dot" style="background:${SOURCES.colors[i]}"></span>
+      <span class="src-name">${lbl}</span>
+      <span class="src-ct">${ct.toLocaleString()}</span>
+      <span class="src-pct">${SOURCES.data[i]}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderReferrers(total) {
+  document.getElementById('ref-list').innerHTML = REFERRERS.map((r,i) => `
+    <div class="ref-item">
+      <span class="ref-rank">${i+1}</span>
+      <span class="ref-name">${r.name}</span>
+      <div class="ref-bar-wrap"><div class="ref-bar" data-w="${r.pct}"></div></div>
+      <span class="ref-pct">${r.pct}%</span>
+    </div>`).join('');
+  setTimeout(() => document.querySelectorAll('.ref-bar').forEach(b => b.style.width = b.dataset.w+'%'), 80);
+}
+
+function renderDevices() {
+  document.getElementById('dev-list').innerHTML = DEVICES.map(d => `
+    <div class="dev-item">
+      <div class="dev-hd">
+        <span class="dev-label">${d.label}</span>
+        <span class="dev-pct">${d.pct}%</span>
+      </div>
+      <div class="dev-bar-wrap"><div class="dev-bar" data-w="${d.pct}" style="background:${d.color}"></div></div>
+    </div>`).join('');
+  setTimeout(() => document.querySelectorAll('.dev-bar').forEach(b => b.style.width = b.dataset.w+'%'), 80);
+}
+
+function update(days) {
+  days = parseInt(days);
+  const {visitors, clicks} = getSlice(days);
+  const labels = getLabels(days);
+
+  const totV = sum(visitors);
+  const totC = sum(clicks);
+  const conv = totV > 0 ? (totC/totV*100) : 0;
+
+  const prevStart = -(days*2), prevEnd = -days;
+  const prevV = sum(ALL_V.slice(prevStart, prevEnd || undefined));
+  const prevC = sum(ALL_C.slice(prevStart, prevEnd || undefined));
+  const prevConv = prevV > 0 ? prevC/prevV*100 : 0;
+
+  const vGrow = prevV > 0 ? Math.round((totV-prevV)/prevV*100) : null;
+  const cGrow = prevC > 0 ? Math.round((totC-prevC)/prevC*100) : null;
+  const rDelta = prevV > 0 ? (conv - prevConv).toFixed(1) : null;
+
+  // Stat values
+  animNum(document.getElementById('sv-v'), totV);
+  animNum(document.getElementById('sv-c'), totC);
+  animNum(document.getElementById('sv-r'), conv.toFixed(1), {dec:1, suf:'%'});
+
+  if (vGrow !== null) {
+    const el = document.getElementById('sv-g');
+    el.textContent = (vGrow>=0?'+':'')+vGrow+'%';
+  }
+
+  // Deltas
+  function setDelta(id, val, suffix='% vs prior period') {
+    const el = document.getElementById(id);
+    if (val===null) { el.textContent=''; return; }
+    el.className = 'sc-delta ' + (val>=0?'pos':'neg');
+    el.textContent = (val>=0?'↑ ':'↓ ') + Math.abs(val) + suffix;
+  }
+  setDelta('sd-v', vGrow);
+  setDelta('sd-c', cGrow);
+  setDelta('sd-r', rDelta, 'pt vs prior');
+
+  // Chart totals
+  document.getElementById('ct-v').textContent = totV.toLocaleString() + ' total';
+  document.getElementById('ct-c').textContent = totC.toLocaleString() + ' total';
+
+  // Referrers + sources
+  renderSources(totV);
+  renderReferrers(totV);
+
+  // Best day
+  const bd = getBestDay(days);
+  document.getElementById('best-day').textContent = bd;
+  document.getElementById('best-day-sub').textContent = 'highest average traffic';
+
+  // Charts
+  buildVisitorChart(labels, visitors);
+  buildClicksChart(labels, clicks);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+function initDash() {
+  document.getElementById('h-biz').textContent  = CONFIG.businessName;
+  document.getElementById('f-biz').textContent  = CONFIG.businessName;
+  document.getElementById('h-ts').textContent   =
+    'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  if (CONFIG.ga4Id) document.getElementById('ga-note').style.display = 'none';
+
+  buildSourcesChart();
+  renderDevices();
+  update(30);
+
+  document.getElementById('period-sel').addEventListener('change', function(){ update(this.value); });
+
+  // Trigger entrance animations
+  requestAnimationFrame(() => {
+    document.getElementById('dash').style.display = 'block';
+    setTimeout(() => document.getElementById('dash').classList.add('ready'), 40);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const k = new URLSearchParams(location.search).get('key');
+  if (k === CONFIG.dashKey) {
+    document.getElementById('lock').style.display = 'none';
+    initDash();
+    return;
+  }
+
+  document.getElementById('lk-btn').addEventListener('click', () => {
+    const val = document.getElementById('lk-in').value.trim();
+    if (val === CONFIG.dashKey) {
+      document.getElementById('lock').style.display = 'none';
+      initDash();
+    } else {
+      const err = document.getElementById('lk-err');
+      const inp = document.getElementById('lk-in');
+      err.classList.add('show');
+      inp.style.borderColor = 'rgba(252,165,165,.35)';
+      setTimeout(()=>{ err.classList.remove('show'); inp.style.borderColor=''; }, 2200);
+    }
+  });
+
+  document.getElementById('lk-in').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('lk-btn').click();
+  });
+})();
+</script>
+</body>
+</html>
