@@ -236,7 +236,7 @@
     position:relative;
     opacity:0;transform:translateX(24px);
     transition:opacity 1s var(--ease),transform 1s var(--ease);
-    transition-delay:.55s;
+    transition-delay:0s;
     overflow:hidden;
     border-radius:4px;
   }
@@ -1000,11 +1000,9 @@
       setTimeout(() => hl2 && hl2.classList.add('v'), 180);
       setTimeout(() => ht  && ht.classList.add('v'),  340);
       setTimeout(() => hc  && hc.classList.add('v'),  480);
-      // reveal slider then auto-sweep so user notices it's interactive
-      setTimeout(() => {
-        if (sw) sw.classList.add('v');
-        setTimeout(() => { if (window._sliderSweep) window._sliderSweep(); }, 400);
-      }, 550);
+      // reveal slider with first wave, auto-sweep after it's visible
+      if (sw) sw.classList.add('v');
+      setTimeout(() => { if (window._sliderSweep) window._sliderSweep(); }, 800);
     }
 
     /* ── before/after comparison slider ── */
