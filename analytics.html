@@ -366,109 +366,19 @@ footer{
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  CONFIG — change these per client
+//  CONFIG — change per client
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   businessName: "Void Garage Cleaning",
   dashKey:      "void2024",
-  ga4Id:        "",        // e.g. "G-XXXXXXXXXX" — add after GA4 setup
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  DATA — 90 days (index 0 = 90 days ago, index 89 = yesterday)
-// ═══════════════════════════════════════════════════════════════
-const ALL_V = [
-  3,6,8,5,7,10,2,
-  4,8,7,10,8,6,3,
-  5,9,12,9,7,5,4,
-  7,11,13,10,8,6,5,
-  9,13,15,12,10,7,6,
-  11,15,17,14,12,8,7,
-  13,17,19,16,13,9,8,
-  14,19,21,18,14,10,9,
-  16,21,23,20,16,11,10,
-  18,24,26,22,18,13,11,
-  20,26,29,24,20,14,12,
-  22,28,31,27,22,16,14,
-  25,32,35,29,26,18,
-];
-
-const ALL_C = [
-  0,0,0,0,0,1,0,
-  0,0,0,1,0,0,0,
-  0,1,1,1,0,0,0,
-  0,1,1,1,1,0,0,
-  1,1,1,1,1,0,0,
-  1,1,1,1,1,1,0,
-  1,1,1,1,1,1,1,
-  1,1,2,1,1,1,1,
-  1,2,2,1,1,1,1,
-  1,2,2,2,1,1,1,
-  1,2,3,2,1,1,1,
-  2,2,3,2,2,1,1,
-  2,3,3,2,2,1,
-];
-
-const SOURCES = {
-  labels: ['Direct','Google','Social','Referral'],
-  data:   [38, 31, 22, 9],
-  colors: [
-    'rgba(255,255,255,.9)',
-    'rgba(255,255,255,.52)',
-    'rgba(255,255,255,.26)',
-    'rgba(255,255,255,.1)',
-  ],
-};
-
-const REFERRERS = [
-  { name:'direct / typed URL', pct:38 },
-  { name:'google.com',         pct:31 },
-  { name:'instagram.com',      pct:14 },
-  { name:'facebook.com',       pct:9  },
-  { name:'nextdoor.com',       pct:8  },
-];
-
-const DEVICES = [
-  { label:'Mobile',  pct:68, color:'rgba(255,255,255,.55)' },
-  { label:'Desktop', pct:32, color:'rgba(255,255,255,.2)'  },
-];
+const SRC_LABELS = ['Direct','Google','Social','Referral'];
+const SRC_COLORS = ['rgba(255,255,255,.9)','rgba(255,255,255,.52)','rgba(255,255,255,.26)','rgba(255,255,255,.1)'];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILS
 // ═══════════════════════════════════════════════════════════════
-const sum = arr => arr.reduce((a,b)=>a+b,0);
-
-function getSlice(days) {
-  return {
-    visitors: ALL_V.slice(-days),
-    clicks:   ALL_C.slice(-days),
-  };
-}
-
-function getLabels(days) {
-  const labels = [], now = new Date();
-  for (let i = days-1; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate()-i);
-    if (days <= 7)       labels.push(d.toLocaleDateString('en-US',{weekday:'short'}));
-    else if (days <= 30) labels.push(d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-    else                 labels.push(i % 14 === 0 ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '');
-  }
-  return labels;
-}
-
-function getBestDay(days) {
-  const visitors = ALL_V.slice(-days);
-  const totals = [0,0,0,0,0,0,0], counts = [0,0,0,0,0,0,0];
-  const now = new Date();
-  visitors.forEach((v,i) => {
-    const d = new Date(now); d.setDate(d.getDate()-(days-1-i));
-    totals[d.getDay()] += v; counts[d.getDay()]++;
-  });
-  const avgs = totals.map((t,i) => counts[i]>0 ? t/counts[i] : 0);
-  const best = avgs.indexOf(Math.max(...avgs));
-  return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][best];
-}
-
 function animNum(el, target, {suf='',dec=0,dur=750}={}) {
   const n = parseFloat(target);
   const t0 = performance.now();
@@ -482,65 +392,103 @@ function animNum(el, target, {suf='',dec=0,dur=750}={}) {
   requestAnimationFrame(tick);
 }
 
+function domainOf(url) {
+  try { return new URL(url).hostname.replace('www.',''); } catch { return url; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA PROCESSING
+// ═══════════════════════════════════════════════════════════════
+function process(visits, events, prevVisits, prevEvents, days) {
+  const now = new Date();
+  const buckets = {};
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    buckets[d.toISOString().slice(0,10)] = {v:0, c:0};
+  }
+  visits.forEach(r => { const k=r.created_at.slice(0,10); if(buckets[k]) buckets[k].v++; });
+  events.forEach(r => { const k=r.created_at.slice(0,10); if(buckets[k]) buckets[k].c++; });
+
+  const entries = Object.entries(buckets);
+  const visitorArr = entries.map(([,d])=>d.v);
+  const clickArr   = entries.map(([,d])=>d.c);
+  const labels = entries.map(([date],i) => {
+    const d = new Date(date+'T12:00:00');
+    if (days<=7)  return d.toLocaleDateString('en-US',{weekday:'short'});
+    if (days<=30) return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return i%14===0 ? d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+  });
+
+  // Sources
+  const sm = {direct:0,google:0,social:0,referral:0};
+  visits.forEach(r => {
+    const s = r.source||'direct';
+    if (s==='google') sm.google++;
+    else if (['facebook','instagram','tiktok','twitter','social'].includes(s)) sm.social++;
+    else if (s==='direct') sm.direct++;
+    else sm.referral++;
+  });
+  const tot = visits.length||1;
+  const srcData = [sm.direct,sm.google,sm.social,sm.referral].map(v=>Math.round(v/tot*100));
+
+  // Referrers
+  const rm = {};
+  visits.forEach(r => {
+    const k = r.referrer ? domainOf(r.referrer) : 'direct / typed URL';
+    rm[k] = (rm[k]||0)+1;
+  });
+  const topRefs = Object.entries(rm).sort((a,b)=>b[1]-a[1]).slice(0,5)
+    .map(([name,ct]) => ({name, pct:Math.round(ct/tot*100)}));
+
+  // Devices
+  const mob = visits.filter(r=>r.is_mobile).length;
+
+  // Best day
+  const dt=[0,0,0,0,0,0,0];
+  visits.forEach(r => dt[new Date(r.created_at).getDay()]++);
+  const bestIdx = dt.indexOf(Math.max(...dt));
+  const DAY = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  return {
+    visitorArr, clickArr, labels, srcData, topRefs,
+    totalV: visits.length, totalC: events.length,
+    prevV: prevVisits.length, prevC: prevEvents.length,
+    prevConv: prevVisits.length>0 ? prevEvents.length/prevVisits.length*100 : 0,
+    mob, desk: visits.length-mob,
+    bestDay: visits.length>0 ? DAY[bestIdx] : '—',
+  };
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  CHARTS
 // ═══════════════════════════════════════════════════════════════
 let cV, cSrc, cC;
 
-const TOOLTIP = {
-  backgroundColor:'#1c1c1c',
-  borderColor:'rgba(255,255,255,.1)',
-  borderWidth:1,
-  titleColor:'rgba(255,255,255,.45)',
-  bodyColor:'#fff',
-  padding:12,
-  cornerRadius:8,
-  displayColors:false,
+const TT = {
+  backgroundColor:'#1c1c1c', borderColor:'rgba(255,255,255,.1)', borderWidth:1,
+  titleColor:'rgba(255,255,255,.45)', bodyColor:'#fff',
+  padding:12, cornerRadius:8, displayColors:false,
 };
 
 function buildVisitorChart(labels, data) {
   if (cV) cV.destroy();
   cV = new Chart(document.getElementById('chart-v').getContext('2d'), {
     type:'bar',
-    data:{
-      labels,
-      datasets:[{
-        data,
-        backgroundColor:'rgba(255,255,255,.07)',
-        hoverBackgroundColor:'rgba(255,255,255,.75)',
-        borderRadius:4,
-        borderSkipped:false,
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw.toLocaleString()} visitors` } } },
-      scales:{
-        x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} },
-        y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5}, border:{display:false} },
-      },
+    data:{ labels, datasets:[{ data, backgroundColor:'rgba(255,255,255,.07)', hoverBackgroundColor:'rgba(255,255,255,.75)', borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ ...TT, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw.toLocaleString()} visitors` } } },
+      scales:{ x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} }, y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5}, border:{display:false} } },
     },
   });
 }
 
-function buildSourcesChart() {
+function buildSourcesChart(data) {
   if (cSrc) cSrc.destroy();
   cSrc = new Chart(document.getElementById('chart-src').getContext('2d'), {
     type:'doughnut',
-    data:{
-      labels: SOURCES.labels,
-      datasets:[{
-        data: SOURCES.data,
-        backgroundColor: SOURCES.colors,
-        borderColor:'#0f0f0f',
-        borderWidth:3,
-        hoverOffset:6,
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      cutout:'74%',
-      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ label:i=>`${i.label}: ${i.raw}%` } } },
+    data:{ labels:SRC_LABELS, datasets:[{ data: data||[25,25,25,25], backgroundColor:SRC_COLORS, borderColor:'#0f0f0f', borderWidth:3, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'74%',
+      plugins:{ legend:{display:false}, tooltip:{ ...TT, callbacks:{ label:i=>`${i.label}: ${i.raw}%` } } },
     },
   });
 }
@@ -549,23 +497,10 @@ function buildClicksChart(labels, data) {
   if (cC) cC.destroy();
   cC = new Chart(document.getElementById('chart-c').getContext('2d'), {
     type:'bar',
-    data:{
-      labels,
-      datasets:[{
-        data,
-        backgroundColor:'rgba(110,231,183,.12)',
-        hoverBackgroundColor:'rgba(110,231,183,.65)',
-        borderRadius:4,
-        borderSkipped:false,
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ ...TOOLTIP, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw} click${i[0].raw!==1?'s':''}` } } },
-      scales:{
-        x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} },
-        y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5,stepSize:1}, border:{display:false} },
-      },
+    data:{ labels, datasets:[{ data, backgroundColor:'rgba(110,231,183,.12)', hoverBackgroundColor:'rgba(110,231,183,.65)', borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ ...TT, callbacks:{ title:i=>i[0].label, body:i=>`${i[0].raw} click${i[0].raw!==1?'s':''}` } } },
+      scales:{ x:{ grid:{display:false}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:10,maxRotation:0}, border:{display:false} }, y:{ grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'rgba(255,255,255,.22)',font:{size:10,family:'Space Grotesk'},maxTicksLimit:5,stepSize:1}, border:{display:false} } },
     },
   });
 }
@@ -573,121 +508,116 @@ function buildClicksChart(labels, data) {
 // ═══════════════════════════════════════════════════════════════
 //  RENDER
 // ═══════════════════════════════════════════════════════════════
-function renderSources(total) {
-  document.getElementById('dc-total').textContent = total.toLocaleString();
-  document.getElementById('src-legend').innerHTML = SOURCES.labels.map((lbl,i) => {
-    const ct = Math.round(total * SOURCES.data[i] / 100);
-    return `<div class="src-item">
-      <span class="src-dot" style="background:${SOURCES.colors[i]}"></span>
+function renderSources(totalV, srcData) {
+  document.getElementById('dc-total').textContent = totalV.toLocaleString();
+  document.getElementById('src-legend').innerHTML = SRC_LABELS.map((lbl,i) => `
+    <div class="src-item">
+      <span class="src-dot" style="background:${SRC_COLORS[i]}"></span>
       <span class="src-name">${lbl}</span>
-      <span class="src-ct">${ct.toLocaleString()}</span>
-      <span class="src-pct">${SOURCES.data[i]}%</span>
-    </div>`;
-  }).join('');
+      <span class="src-ct">${Math.round(totalV*srcData[i]/100).toLocaleString()}</span>
+      <span class="src-pct">${srcData[i]}%</span>
+    </div>`).join('');
 }
 
-function renderReferrers(total) {
-  document.getElementById('ref-list').innerHTML = REFERRERS.map((r,i) => `
+function renderReferrers(topRefs) {
+  if (!topRefs.length) {
+    document.getElementById('ref-list').innerHTML = '<p style="font-size:12px;color:var(--t3);margin-top:8px">No referrer data yet — check back after your first visitors.</p>';
+    return;
+  }
+  document.getElementById('ref-list').innerHTML = topRefs.map((r,i) => `
     <div class="ref-item">
       <span class="ref-rank">${i+1}</span>
       <span class="ref-name">${r.name}</span>
       <div class="ref-bar-wrap"><div class="ref-bar" data-w="${r.pct}"></div></div>
       <span class="ref-pct">${r.pct}%</span>
     </div>`).join('');
-  setTimeout(() => document.querySelectorAll('.ref-bar').forEach(b => b.style.width = b.dataset.w+'%'), 80);
+  setTimeout(()=>document.querySelectorAll('.ref-bar').forEach(b=>b.style.width=b.dataset.w+'%'), 80);
 }
 
-function renderDevices() {
-  document.getElementById('dev-list').innerHTML = DEVICES.map(d => `
+function renderDevices(mob, desk) {
+  const tot = mob+desk||1;
+  const mp = Math.round(mob/tot*100), dp = 100-mp;
+  document.getElementById('dev-list').innerHTML = [
+    {label:'Mobile',  pct:mp, color:'rgba(255,255,255,.55)'},
+    {label:'Desktop', pct:dp, color:'rgba(255,255,255,.2)'},
+  ].map(d=>`
     <div class="dev-item">
-      <div class="dev-hd">
-        <span class="dev-label">${d.label}</span>
-        <span class="dev-pct">${d.pct}%</span>
-      </div>
+      <div class="dev-hd"><span class="dev-label">${d.label}</span><span class="dev-pct">${d.pct}%</span></div>
       <div class="dev-bar-wrap"><div class="dev-bar" data-w="${d.pct}" style="background:${d.color}"></div></div>
     </div>`).join('');
-  setTimeout(() => document.querySelectorAll('.dev-bar').forEach(b => b.style.width = b.dataset.w+'%'), 80);
+  setTimeout(()=>document.querySelectorAll('.dev-bar').forEach(b=>b.style.width=b.dataset.w+'%'), 80);
 }
 
-function update(days) {
+// ═══════════════════════════════════════════════════════════════
+//  UPDATE (fetches real data)
+// ═══════════════════════════════════════════════════════════════
+async function update(days) {
   days = parseInt(days);
-  const {visitors, clicks} = getSlice(days);
-  const labels = getLabels(days);
+  document.querySelectorAll('.sc-val').forEach(e=>{ if(e.textContent!=='—') e.textContent='·'; });
 
-  const totV = sum(visitors);
-  const totC = sum(clicks);
-  const conv = totV > 0 ? (totC/totV*100) : 0;
+  try {
+    const res = await fetch(`/api/analytics?key=${CONFIG.dashKey}&days=${days}`);
+    if (!res.ok) throw new Error('API '+res.status);
+    const { visits=[], events=[], prevVisits=[], prevEvents=[] } = await res.json();
 
-  const prevStart = -(days*2), prevEnd = -days;
-  const prevV = sum(ALL_V.slice(prevStart, prevEnd || undefined));
-  const prevC = sum(ALL_C.slice(prevStart, prevEnd || undefined));
-  const prevConv = prevV > 0 ? prevC/prevV*100 : 0;
+    const d = process(visits, events, prevVisits, prevEvents, days);
+    const conv     = d.totalV > 0 ? d.totalC/d.totalV*100 : 0;
+    const vGrow    = d.prevV  > 0 ? Math.round((d.totalV-d.prevV)/d.prevV*100) : null;
+    const cGrow    = d.prevC  > 0 ? Math.round((d.totalC-d.prevC)/d.prevC*100) : null;
+    const rDelta   = d.prevV  > 0 ? (conv - d.prevConv).toFixed(1) : null;
 
-  const vGrow = prevV > 0 ? Math.round((totV-prevV)/prevV*100) : null;
-  const cGrow = prevC > 0 ? Math.round((totC-prevC)/prevC*100) : null;
-  const rDelta = prevV > 0 ? (conv - prevConv).toFixed(1) : null;
+    animNum(document.getElementById('sv-v'), d.totalV);
+    animNum(document.getElementById('sv-c'), d.totalC);
+    animNum(document.getElementById('sv-r'), conv.toFixed(1), {dec:1, suf:'%'});
+    document.getElementById('sv-g').textContent = vGrow!==null ? (vGrow>=0?'+':'')+vGrow+'%' : '—';
 
-  // Stat values
-  animNum(document.getElementById('sv-v'), totV);
-  animNum(document.getElementById('sv-c'), totC);
-  animNum(document.getElementById('sv-r'), conv.toFixed(1), {dec:1, suf:'%'});
+    function setDelta(id, val, suf='% vs prior') {
+      const el = document.getElementById(id);
+      if (val===null) { el.textContent=''; return; }
+      el.className = 'sc-delta '+(parseFloat(val)>=0?'pos':'neg');
+      el.textContent = (parseFloat(val)>=0?'↑ ':'↓ ')+Math.abs(val)+suf;
+    }
+    setDelta('sd-v', vGrow);
+    setDelta('sd-c', cGrow);
+    setDelta('sd-r', rDelta, 'pt vs prior');
 
-  if (vGrow !== null) {
-    const el = document.getElementById('sv-g');
-    el.textContent = (vGrow>=0?'+':'')+vGrow+'%';
+    document.getElementById('ct-v').textContent = d.totalV.toLocaleString()+' total';
+    document.getElementById('ct-c').textContent = d.totalC.toLocaleString()+' total';
+
+    buildVisitorChart(d.labels, d.visitorArr);
+    buildClicksChart(d.labels, d.clickArr);
+    buildSourcesChart(d.srcData);
+    renderSources(d.totalV, d.srcData);
+    renderReferrers(d.topRefs);
+    renderDevices(d.mob, d.desk);
+
+    document.getElementById('best-day').textContent = d.bestDay;
+    document.getElementById('best-day-sub').textContent = 'highest average traffic';
+    document.getElementById('h-ts').textContent =
+      'Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  } catch(err) {
+    document.querySelectorAll('.sc-val').forEach(e=>e.textContent='—');
+    document.getElementById('h-ts').textContent = 'Error loading data';
+    console.error('Analytics fetch failed:', err);
   }
-
-  // Deltas
-  function setDelta(id, val, suffix='% vs prior period') {
-    const el = document.getElementById(id);
-    if (val===null) { el.textContent=''; return; }
-    el.className = 'sc-delta ' + (val>=0?'pos':'neg');
-    el.textContent = (val>=0?'↑ ':'↓ ') + Math.abs(val) + suffix;
-  }
-  setDelta('sd-v', vGrow);
-  setDelta('sd-c', cGrow);
-  setDelta('sd-r', rDelta, 'pt vs prior');
-
-  // Chart totals
-  document.getElementById('ct-v').textContent = totV.toLocaleString() + ' total';
-  document.getElementById('ct-c').textContent = totC.toLocaleString() + ' total';
-
-  // Referrers + sources
-  renderSources(totV);
-  renderReferrers(totV);
-
-  // Best day
-  const bd = getBestDay(days);
-  document.getElementById('best-day').textContent = bd;
-  document.getElementById('best-day-sub').textContent = 'highest average traffic';
-
-  // Charts
-  buildVisitorChart(labels, visitors);
-  buildClicksChart(labels, clicks);
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════════
 function initDash() {
-  document.getElementById('h-biz').textContent  = CONFIG.businessName;
-  document.getElementById('f-biz').textContent  = CONFIG.businessName;
-  document.getElementById('h-ts').textContent   =
-    'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  document.getElementById('h-biz').textContent = CONFIG.businessName;
+  document.getElementById('f-biz').textContent = CONFIG.businessName;
+  document.getElementById('ga-note').style.display = 'none';
 
-  if (CONFIG.ga4Id) document.getElementById('ga-note').style.display = 'none';
-
-  buildSourcesChart();
-  renderDevices();
-  update(30);
-
-  document.getElementById('period-sel').addEventListener('change', function(){ update(this.value); });
-
-  // Trigger entrance animations
-  requestAnimationFrame(() => {
+  requestAnimationFrame(()=>{
     document.getElementById('dash').style.display = 'block';
-    setTimeout(() => document.getElementById('dash').classList.add('ready'), 40);
+    setTimeout(()=>document.getElementById('dash').classList.add('ready'), 40);
   });
+
+  update(30);
+  document.getElementById('period-sel').addEventListener('change', function(){ update(this.value); });
 }
 
 // ═══════════════════════════════════════════════════════════════
