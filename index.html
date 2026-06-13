@@ -622,9 +622,9 @@
     .hero-ctas{flex-direction:column;align-items:flex-start}
   }
   @keyframes shimmer-enter{0%{background-position:-200% center}100%{background-position:200% center}}
-  #enter-btn{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1s var(--ease);pointer-events:none}
-  #enter-btn span{display:inline-block;font-family:var(--fb);font-size:24px;font-weight:600;letter-spacing:.35em;text-indent:.35em;text-transform:uppercase;padding:32px 56px;background:linear-gradient(90deg,rgba(255,255,255,.3) 0%,#fff 40%,rgba(255,255,255,.3) 60%,rgba(255,255,255,.3) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer-enter 2.5s linear infinite}
-  #enter-btn.v{opacity:1;pointer-events:auto;cursor:pointer}
+  #enter-btn{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;padding-top:22vh;opacity:0;transition:opacity 1s var(--ease);pointer-events:none}
+  #enter-btn span{display:inline-block;font-family:var(--fb);font-size:18px;font-weight:600;letter-spacing:.35em;text-indent:.35em;text-transform:uppercase;padding:28px 52px;background:linear-gradient(90deg,rgba(255,255,255,.3) 0%,#fff 40%,rgba(255,255,255,.3) 60%,rgba(255,255,255,.3) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer-enter 2.5s linear infinite;cursor:pointer}
+  #enter-btn.v{opacity:1;pointer-events:auto;cursor:pointer;background:rgba(0,0,0,.001)}
   body.revealed #enter-btn{opacity:0!important;pointer-events:none!important;transition:opacity .3s}
   @media(max-width:600px){#enter-btn{display:none!important}}
   </style>
@@ -1071,13 +1071,16 @@
         }
       }, 9000);
       const enterBtn = document.getElementById('enter-btn');
-      setTimeout(() => { if (!revealCalled) enterBtn.classList.add('v'); }, 1500);
-      enterBtn.addEventListener('click', () => {
+      const enterSpan = enterBtn.querySelector('span');
+      function doEnter() {
         if (revealCalled) return;
         revealCalled = true;
         enterBtn.classList.remove('v');
         doReveal();
-      });
+      }
+      setTimeout(() => { if (!revealCalled) enterBtn.classList.add('v'); }, 1500);
+      enterSpan.addEventListener('click', doEnter);
+      enterBtn.addEventListener('click', doEnter);
     }
 
     /* ── scroll ── */
