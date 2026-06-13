@@ -622,9 +622,8 @@
     .hero-ctas{flex-direction:column;align-items:flex-start}
   }
   @keyframes shimmer-enter{0%{background-position:-200% center}100%{background-position:200% center}}
-  #enter-btn{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;padding-top:22vh;opacity:0;transition:opacity 1s var(--ease);pointer-events:none}
-  #enter-btn span{display:inline-block;font-family:var(--fb);font-size:18px;font-weight:600;letter-spacing:.35em;text-indent:.35em;text-transform:uppercase;padding:28px 52px;background:linear-gradient(90deg,rgba(255,255,255,.3) 0%,#fff 40%,rgba(255,255,255,.3) 60%,rgba(255,255,255,.3) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer-enter 2.5s linear infinite;cursor:pointer}
-  #enter-btn.v{opacity:1;pointer-events:auto;cursor:pointer;background:rgba(0,0,0,.001)}
+  #enter-btn{position:fixed;left:50%;top:61%;transform:translate(-50%,-50%);z-index:25;border:none;background:none;padding:28px 52px;font-family:var(--fb);font-size:18px;font-weight:600;letter-spacing:.35em;text-indent:.35em;text-transform:uppercase;background:linear-gradient(90deg,rgba(255,255,255,.3) 0%,#fff 40%,rgba(255,255,255,.3) 60%,rgba(255,255,255,.3) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer-enter 2.5s linear infinite;cursor:pointer;opacity:0;transition:opacity 1s var(--ease);pointer-events:none}
+  #enter-btn.v{opacity:1;pointer-events:auto}
   body.revealed #enter-btn{opacity:0!important;pointer-events:none!important;transition:opacity .3s}
   @media(max-width:600px){#enter-btn{display:none!important}}
   </style>
@@ -664,7 +663,7 @@
   <video id="vid" autoplay muted playsinline preload="auto" loop aria-hidden="true" tabindex="-1">
     <source src="intro.mp4" type="video/mp4">
   </video>
-  <div id="enter-btn" aria-hidden="true"><span>ENTER</span></div>
+  <button id="enter-btn" type="button" aria-label="Enter site">ENTER</button>
 
   <!-- Theme toggle -->
   <div id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode">
@@ -1071,16 +1070,13 @@
         }
       }, 9000);
       const enterBtn = document.getElementById('enter-btn');
-      const enterSpan = enterBtn.querySelector('span');
-      function doEnter() {
+      setTimeout(() => { if (!revealCalled) enterBtn.classList.add('v'); }, 1500);
+      enterBtn.addEventListener('click', () => {
         if (revealCalled) return;
         revealCalled = true;
         enterBtn.classList.remove('v');
         doReveal();
-      }
-      setTimeout(() => { if (!revealCalled) enterBtn.classList.add('v'); }, 1500);
-      enterSpan.addEventListener('click', doEnter);
-      enterBtn.addEventListener('click', doEnter);
+      });
     }
 
     /* ── scroll ── */
