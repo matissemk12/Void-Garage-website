@@ -442,8 +442,18 @@
   .card-price{
     font-family:var(--fd);font-size:clamp(40px,4vw,64px);font-weight:300;
     color:#000;letter-spacing:-.03em;line-height:1;
-    font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
   }
+  /* ── split-flap digit slots ── */
+  .fp-char{display:inline-block;letter-spacing:-.03em}
+  .fp-slot{display:inline-block;overflow:hidden;vertical-align:top;letter-spacing:-.03em}
+  .fp-digit{display:block}
+  @keyframes fp-in{
+    0%  {opacity:0;transform:translateY(-70%)}
+    44% {opacity:1;transform:translateY(3%)}
+    70% {transform:translateY(-1.5%)}
+    100%{opacity:1;transform:translateY(0)}
+  }
+  .fp-digit.fp-in{animation:fp-in 105ms cubic-bezier(.22,1,.36,1) both}
   .card-sub{font-size:10px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:rgba(0,0,0,.4);margin-top:6px}
 
   /* ━━ MARQUEE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -1163,31 +1173,51 @@
 
     document.querySelectorAll('[data-r],[data-sl],[data-sr]').forEach(el => io.observe(el));
 
-    /* ── price counters ── */
-    document.querySelectorAll('[data-count]').forEach(el => {
-      const target = parseInt(el.dataset.count, 10);
-      const prefix = el.dataset.countPrefix || '';
-      let done = false;
-      const cio = new IntersectionObserver(([entry]) => {
-        if (!entry.isIntersecting || done || !document.body.classList.contains('revealed')) return;
-        done = true;
-        cio.disconnect();
-        const dur = 1100, t0 = performance.now();
-        // start at the lowest number with the same digit count as target
-        // so digit-count never changes mid-animation (no layout shift)
-        const startVal = Math.pow(10, String(target).length - 1);
-        function tick(now) {
-          const p = Math.min((now - t0) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          const cur = Math.round(startVal + eased * (target - startVal));
-          el.textContent = prefix + cur;
-          if (p < 1) requestAnimationFrame(tick);
-          else el.textContent = prefix + target;
-        }
-        requestAnimationFrame(tick);
-      }, { threshold: 0.6 });
-      cio.observe(el);
-    });
+    /* ── price counters (split-flap) ── */
+    (function(){
+      function setDigit(el, ch) {
+        el.textContent = ch;
+        el.classList.remove('fp-in');
+        el.offsetHeight; // reflow to restart animation
+        el.classList.add('fp-in');
+      }
+      function animateFlip(priceEl, prefix, target) {
+        const tStr = String(target);
+        let html = '';
+        for (const ch of prefix) html += `<span class="fp-char">${ch}</span>`;
+        for (let i = 0; i < tStr.length; i++) html += `<span class="fp-slot"><span class="fp-digit">0</span></span>`;
+        priceEl.innerHTML = html;
+        priceEl.setAttribute('aria-label', prefix + target);
+        const slots = [...priceEl.querySelectorAll('.fp-slot')];
+        slots.forEach((slot, col) => {
+          const dEl = slot.querySelector('.fp-digit');
+          const tDigit = tStr[col];
+          const total = 10 + col * 6;
+          let cur = 0, step = 0;
+          function tick() {
+            if (step === total) { setDigit(dEl, tDigit); return; }
+            const t = step / total;
+            const ms = 45 + Math.pow(t, 2) * 200;
+            cur = (cur + 1) % 10;
+            setDigit(dEl, cur);
+            step++;
+            setTimeout(tick, ms);
+          }
+          setTimeout(tick, col * 70);
+        });
+      }
+      document.querySelectorAll('[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count, 10);
+        const prefix = el.dataset.countPrefix || '';
+        let done = false;
+        const cio = new IntersectionObserver(([e]) => {
+          if (!e.isIntersecting || done || !document.body.classList.contains('revealed')) return;
+          done = true; cio.disconnect();
+          animateFlip(el, prefix, target);
+        }, { threshold: 0.6 });
+        cio.observe(el);
+      });
+    })();
 
     /* ── process steps: strict 1-2-3 sequence via JS ── */
     (function(){
