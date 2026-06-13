@@ -443,17 +443,6 @@
     font-family:var(--fd);font-size:clamp(40px,4vw,64px);font-weight:300;
     color:#000;letter-spacing:-.03em;line-height:1;
   }
-  /* ── split-flap digit slots ── */
-  .fp-char{display:inline-block;letter-spacing:-.03em}
-  .fp-slot{display:inline-block;overflow:hidden;vertical-align:top;letter-spacing:-.03em}
-  .fp-digit{display:block}
-  @keyframes fp-in{
-    0%  {opacity:0;transform:translateY(-70%)}
-    44% {opacity:1;transform:translateY(3%)}
-    70% {transform:translateY(-1.5%)}
-    100%{opacity:1;transform:translateY(0)}
-  }
-  .fp-digit.fp-in{animation:fp-in 105ms cubic-bezier(.22,1,.36,1) both}
   .card-sub{font-size:10px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:rgba(0,0,0,.4);margin-top:6px}
 
   /* ━━ MARQUEE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -796,7 +785,7 @@
           <div class="card-tag" data-r>Core Service</div>
           <div class="card-name" data-r class="d1">Garage Cleanout</div>
           <p class="card-body" data-r class="d2">We haul everything away. You keep what you love — we handle the rest. Full removal, no sorting required on your end.</p>
-          <div class="card-price" data-r data-count="699" data-count-prefix="$" class="d3">$699</div>
+          <div class="card-price" data-r class="d3">$699</div>
           <div class="card-sub" data-r class="d4">Per truckload</div>
         </article>
         <article class="card" data-sr>
@@ -804,7 +793,7 @@
           <div class="card-tag" data-r>Add-On</div>
           <div class="card-name" data-r class="d1">Organization</div>
           <p class="card-body" data-r class="d2">Want to keep the space functional after the cleanout? We offer custom organization solutions as an add-on to any service.</p>
-          <div class="card-price" data-r data-count="200" data-count-prefix="+$" class="d3">+$200</div>
+          <div class="card-price" data-r class="d3">+$200</div>
           <div class="card-sub" data-r class="d4">Added to any cleanout</div>
         </article>
       </div>
@@ -1173,51 +1162,6 @@
 
     document.querySelectorAll('[data-r],[data-sl],[data-sr]').forEach(el => io.observe(el));
 
-    /* ── price counters (split-flap) ── */
-    (function(){
-      function setDigit(el, ch) {
-        el.textContent = ch;
-        el.classList.remove('fp-in');
-        el.offsetHeight; // reflow to restart animation
-        el.classList.add('fp-in');
-      }
-      function animateFlip(priceEl, prefix, target) {
-        const tStr = String(target);
-        let html = '';
-        for (const ch of prefix) html += `<span class="fp-char">${ch}</span>`;
-        for (let i = 0; i < tStr.length; i++) html += `<span class="fp-slot"><span class="fp-digit">0</span></span>`;
-        priceEl.innerHTML = html;
-        priceEl.setAttribute('aria-label', prefix + target);
-        const slots = [...priceEl.querySelectorAll('.fp-slot')];
-        slots.forEach((slot, col) => {
-          const dEl = slot.querySelector('.fp-digit');
-          const tDigit = tStr[col];
-          const total = 10 + col * 6;
-          let cur = 0, step = 0;
-          function tick() {
-            if (step === total) { setDigit(dEl, tDigit); return; }
-            const t = step / total;
-            const ms = 45 + Math.pow(t, 2) * 200;
-            cur = (cur + 1) % 10;
-            setDigit(dEl, cur);
-            step++;
-            setTimeout(tick, ms);
-          }
-          setTimeout(tick, col * 70);
-        });
-      }
-      document.querySelectorAll('[data-count]').forEach(el => {
-        const target = parseInt(el.dataset.count, 10);
-        const prefix = el.dataset.countPrefix || '';
-        let done = false;
-        const cio = new IntersectionObserver(([e]) => {
-          if (!e.isIntersecting || done || !document.body.classList.contains('revealed')) return;
-          done = true; cio.disconnect();
-          animateFlip(el, prefix, target);
-        }, { threshold: 0.6 });
-        cio.observe(el);
-      });
-    })();
 
     /* ── process steps: strict 1-2-3 sequence via JS ── */
     (function(){
