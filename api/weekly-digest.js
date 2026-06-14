@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
   const SKEY   = process.env.SUPABASE_SERVICE_KEY;
   const RESEND = process.env.RESEND_API_KEY;
   const TO     = process.env.DIGEST_TO || 'matissemk12@gmail.com';
-  const DASH   = process.env.SITE_URL  || 'https://void-garage-website.vercel.app';
+  const DASH   = process.env.SITE_URL  || 'https://www.voidgaragecleaning.com';
 
   const h = { apikey: SKEY, Authorization: `Bearer ${SKEY}`, 'Content-Type': 'application/json' };
 
