@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Void Garage Cleaning — Invoice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 48px 64px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .logo span {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: #666;
+    letter-spacing: .05em;
+    margin-top: 2px;
+  }
+  .logo .contact {
+    margin-top: 10px;
+    font-size: 10px;
+    font-weight: 400;
+    color: #444;
+    letter-spacing: 0;
+  }
+  .doc-meta {
+    text-align: right;
+  }
+  .doc-meta h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin-bottom: 10px;
+  }
+  .doc-meta table {
+    margin-left: auto;
+    border-collapse: collapse;
+  }
+  .doc-meta td {
+    padding: 2px 0 2px 20px;
+    font-size: 10px;
+  }
+  .doc-meta td:first-child {
+    color: #888;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .doc-meta td:last-child {
+    font-weight: 500;
+    min-width: 130px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* ── Bill To / From ── */
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .party-block h3 {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .field-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .field-row label {
+    font-size: 9px;
+    color: #aaa;
+    white-space: nowrap;
+    min-width: 48px;
+  }
+  .field-row .line {
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+    min-height: 16px;
+  }
+
+  /* ── Line items table ── */
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+  }
+  .items-table thead tr {
+    background: #000;
+    color: #fff;
+  }
+  .items-table thead th {
+    padding: 8px 12px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+  .items-table thead th:last-child,
+  .items-table thead th:nth-child(3),
+  .items-table thead th:nth-child(4) {
+    text-align: right;
+  }
+  .items-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .items-table tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+  .items-table tbody td {
+    padding: 10px 12px;
+    vertical-align: top;
+  }
+  .items-table tbody td:nth-child(3),
+  .items-table tbody td:nth-child(4),
+  .items-table tbody td:last-child {
+    text-align: right;
+  }
+  .items-table .desc-cell { font-weight: 500; }
+  .items-table .note-cell { font-size: 10px; color: #888; margin-top: 2px; }
+
+  /* Empty rows */
+  .items-table .empty-row td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .items-table .empty-row td:first-child .dot-line {
+    border-bottom: 1px dotted #ccc;
+    height: 14px;
+  }
+
+  /* ── Totals ── */
+  .totals-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0;
+    border-top: 2px solid #000;
+  }
+  .totals-table {
+    width: 280px;
+    border-collapse: collapse;
+  }
+  .totals-table td {
+    padding: 7px 12px;
+    font-size: 11px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .totals-table td:last-child { text-align: right; font-weight: 500; }
+  .totals-table .total-row td {
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: none;
+    padding-top: 10px;
+    border-top: 1px solid #000;
+    margin-top: 4px;
+  }
+  .totals-table .total-row td:first-child { color: #000; }
+
+  /* ── Payment & Notes ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .bottom-block h3 {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+    font-size: 11px;
+  }
+  .payment-method .bullet {
+    width: 6px;
+    height: 6px;
+    background: #000;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .notes-lines .line {
+    border-bottom: 1px solid #e0e0e0;
+    height: 20px;
+    margin-bottom: 8px;
+  }
+
+  /* ── Status stamp ── */
+  .stamp {
+    display: inline-block;
+    border: 2px solid #000;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .stamp.paid { border-color: #16a34a; color: #16a34a; }
+  .stamp.unpaid { border-color: #dc2626; color: #dc2626; }
+  .stamp.pending { border-color: #d97706; color: #d97706; }
+
+  /* ── Sig ── */
+  .sig-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .sig-field .line {
+    border-bottom: 1px solid #000;
+    height: 36px;
+    margin-bottom: 5px;
+  }
+  .sig-field .sub {
+    font-size: 9px;
+    color: #888;
+    letter-spacing: .05em;
+  }
+
+  /* ── Footer ── */
+  .doc-footer {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+    font-size: 9px;
+    color: #aaa;
+    text-align: center;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { padding: 32px 48px; }
+    @page { margin: 0.5in; size: letter; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    ◼ Void Garage Cleaning
+    <span>Professional Garage Cleaning &amp; Junk Removal</span>
+    <div class="contact">
+      San Antonio, TX &nbsp;·&nbsp; voidgaragecleaning.com
+    </div>
+  </div>
+  <div class="doc-meta">
+    <h1>INVOICE</h1>
+    <table>
+      <tr>
+        <td>Invoice #</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Date</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Due Date</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Service Date</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Bill To / Service Address -->
+<div class="parties">
+  <div class="party-block">
+    <h3>Bill To</h3>
+    <div class="field-row"><label>Name</label><div class="line"></div></div>
+    <div class="field-row"><label>Address</label><div class="line"></div></div>
+    <div class="field-row"><label>City</label><div class="line"></div></div>
+    <div class="field-row"><label>Phone</label><div class="line"></div></div>
+    <div class="field-row"><label>Email</label><div class="line"></div></div>
+  </div>
+  <div class="party-block">
+    <h3>Service Address (if different)</h3>
+    <div class="field-row"><label>Address</label><div class="line"></div></div>
+    <div class="field-row"><label>City</label><div class="line"></div></div>
+    <div class="field-row"><label></label><div class="line"></div></div>
+    <h3 style="margin-top:16px">Status</h3>
+    <div class="stamp unpaid">Unpaid</div>
+    &nbsp;
+    <div class="stamp paid" style="display:none">Paid</div>
+  </div>
+</div>
+
+<!-- Line Items -->
+<table class="items-table">
+  <thead>
+    <tr>
+      <th style="width:40%">Description</th>
+      <th style="width:20%">Details</th>
+      <th style="width:12%">Qty</th>
+      <th style="width:13%">Unit Price</th>
+      <th style="width:15%">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Pre-filled example rows — cross out or overwrite as needed -->
+    <tr>
+      <td>
+        <div class="desc-cell">Garage Cleanout</div>
+        <div class="note-cell">Full cleanout, haul away, sweep</div>
+      </td>
+      <td></td>
+      <td>1</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="desc-cell">Organization / Shelving</div>
+        <div class="note-cell">Sorting, staging, shelf setup</div>
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr class="empty-row">
+      <td><div class="dot-line"></div></td>
+      <td></td><td></td><td></td><td></td>
+    </tr>
+    <tr class="empty-row">
+      <td><div class="dot-line"></div></td>
+      <td></td><td></td><td></td><td></td>
+    </tr>
+    <tr class="empty-row">
+      <td><div class="dot-line"></div></td>
+      <td></td><td></td><td></td><td></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Totals -->
+<div class="totals-wrap">
+  <table class="totals-table">
+    <tr>
+      <td>Subtotal</td>
+      <td>$</td>
+    </tr>
+    <tr>
+      <td>Deposit Received</td>
+      <td>($&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+    </tr>
+    <tr>
+      <td>Discount</td>
+      <td>($&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</td>
+    </tr>
+    <tr class="total-row">
+      <td>Balance Due</td>
+      <td>$</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Payment & Notes -->
+<div class="bottom-grid">
+  <div class="bottom-block">
+    <h3>Payment Methods</h3>
+    <div class="payment-method"><div class="bullet"></div> Cash</div>
+    <div class="payment-method"><div class="bullet"></div> Zelle</div>
+    <div class="payment-method"><div class="bullet"></div> Venmo</div>
+    <div class="payment-method"><div class="bullet"></div> Card (ask for link)</div>
+    <p style="margin-top:10px;font-size:10px;color:#888">Payment due upon completion of service unless otherwise agreed in writing.</p>
+  </div>
+  <div class="bottom-block">
+    <h3>Notes</h3>
+    <div class="notes-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Client Acknowledgment -->
+<div class="sig-row">
+  <div class="sig-field">
+    <div class="line"></div>
+    <div class="sub">Client Signature — confirms work completed as described</div>
+  </div>
+  <div class="sig-field">
+    <div class="line"></div>
+    <div class="sub">Date</div>
+  </div>
+</div>
+
+<div class="doc-footer">
+  Void Garage Cleaning &nbsp;·&nbsp; San Antonio, TX &nbsp;·&nbsp; voidgaragecleaning.com &nbsp;·&nbsp; © 2025 All rights reserved.
+</div>
+
+</body>
+</html>

@@ -18,16 +18,20 @@ module.exports = async function handler(req, res) {
   const weekAgo  = new Date(now - 7  * 86400000).toISOString();
   const twoWeeks = new Date(now - 14 * 86400000).toISOString();
 
-  const [r1, r2, r3, r4] = await Promise.all([
-    fetch(`${SUPA}/rest/v1/visits?created_at=gte.${weekAgo}&select=id,source,is_mobile`, { headers: h }),
-    fetch(`${SUPA}/rest/v1/events?created_at=gte.${weekAgo}&event_name=eq.book_click&select=id`, { headers: h }),
-    fetch(`${SUPA}/rest/v1/visits?created_at=gte.${twoWeeks}&created_at=lt.${weekAgo}&select=id,source`, { headers: h }),
-    fetch(`${SUPA}/rest/v1/events?created_at=gte.${twoWeeks}&created_at=lt.${weekAgo}&event_name=eq.book_click&select=id`, { headers: h }),
-  ]);
-
-  const [visits, clicks, prevVisits, prevClicks] = await Promise.all([
-    r1.json(), r2.json(), r3.json(), r4.json(),
-  ]);
+  let visits, clicks, prevVisits, prevClicks;
+  try {
+    const [r1, r2, r3, r4] = await Promise.all([
+      fetch(`${SUPA}/rest/v1/visits?created_at=gte.${weekAgo}&select=id,source,is_mobile`, { headers: h }),
+      fetch(`${SUPA}/rest/v1/events?created_at=gte.${weekAgo}&event_name=eq.book_click&select=id`, { headers: h }),
+      fetch(`${SUPA}/rest/v1/visits?created_at=gte.${twoWeeks}&created_at=lt.${weekAgo}&select=id,source`, { headers: h }),
+      fetch(`${SUPA}/rest/v1/events?created_at=gte.${twoWeeks}&created_at=lt.${weekAgo}&event_name=eq.book_click&select=id`, { headers: h }),
+    ]);
+    [visits, clicks, prevVisits, prevClicks] = await Promise.all([
+      r1.json(), r2.json(), r3.json(), r4.json(),
+    ]);
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to fetch data from Supabase', detail: err.message });
+  }
 
   // Stats
   const tv = visits.length, tc = clicks.length;
@@ -122,7 +126,7 @@ module.exports = async function handler(req, res) {
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td>
-                <a href="${DASH}/analytics.html?key=void2024"
+                <a href="${DASH}/analytics.html?key=${process.env.ANALYTICS_KEY}"
                    style="display:inline-block;background:#fff;color:#000;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding:13px 24px;border-radius:8px">
                   View Full Dashboard
                 </a>

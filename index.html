@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%23fff' text-anchor='middle'>V</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Void Garage Cleaning</title>
   <meta name="description" content="Fast, efficient garage cleanouts. Local & independently owned. We don't leave until you're satisfied.">
@@ -707,7 +708,7 @@
 
   <!-- Mobile cinematic intro -->
   <div id="mob-intro" aria-hidden="true">
-    <div class="mi-clip"><span class="mi-word" id="miw1">$699.</span></div>
+    <div class="mi-clip"><span class="mi-word" id="miw1">$699</span></div>
     <p class="mi-sub" id="misub">PER TRUCKLOAD</p>
   </div>
 
@@ -976,11 +977,10 @@
     <footer>
       <div class="fl">Void Garage Cleaning</div>
       <div class="fc">San Antonio, TX</div>
-      <div class="fr">&copy; 2025 Void Garage Cleaning. All rights reserved.</div>
+      <div class="fr">&copy; <span id="cyr">2025</span> Void Garage Cleaning. All rights reserved.</div>
     </footer>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script>
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
@@ -1219,6 +1219,9 @@
       sel.addEventListener('change', () => sel.closest('.ff').classList.add('sl'));
     });
 
+    /* ── Copyright year ── */
+    document.getElementById('cyr').textContent = new Date().getFullYear();
+
     /* ── Nav active state ── */
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -1421,7 +1424,10 @@
   })();
   </script>
   <script>
-  if (typeof THREE !== 'undefined' && window.innerWidth > 600) {
+  if (window.innerWidth > 600) {
+    var _t3 = document.createElement('script');
+    _t3.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js';
+    _t3.onload = function() {
     const nc = document.getElementById('nav-canvas');
     const wrap = document.getElementById('nav-canvas-wrap');
     const navEl = document.getElementById('nav');
@@ -1475,6 +1481,8 @@
       new ResizeObserver(sync).observe(navEl);
       (function loop(){ uniforms.time.value += 0.05; renderer.render(scene, camera); requestAnimationFrame(loop); })();
     }
+    };
+    document.head.appendChild(_t3);
   }
   </script>
 

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Void Garage Cleaning — Service Agreement</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 48px 64px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 28px;
+  }
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .logo span {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: #666;
+    letter-spacing: .05em;
+    margin-top: 2px;
+  }
+  .doc-title {
+    text-align: right;
+  }
+  .doc-title h1 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .doc-title p {
+    font-size: 10px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  /* ── Client info block ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .info-field label {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .info-field .line {
+    border-bottom: 1px solid #bbb;
+    min-height: 18px;
+  }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #000;
+    border-bottom: 1px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+  p { margin-bottom: 7px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul {
+    padding-left: 16px;
+    margin-bottom: 7px;
+  }
+  ul li { margin-bottom: 3px; }
+
+  strong { font-weight: 600; }
+
+  /* ── Scope box ── */
+  .scope-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 10px;
+  }
+  .scope-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .scope-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .scope-label { font-weight: 500; color: #444; }
+  .scope-value {
+    border-bottom: 1px solid #bbb;
+    min-width: 200px;
+    min-height: 16px;
+    text-align: right;
+  }
+
+  /* ── Signature block ── */
+  .sig-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 8px;
+  }
+  .sig-block { }
+  .sig-line {
+    border-bottom: 1px solid #000;
+    height: 40px;
+    margin-bottom: 6px;
+  }
+  .sig-label {
+    font-size: 9px;
+    color: #666;
+    letter-spacing: .05em;
+  }
+  .sig-name-line {
+    border-bottom: 1px solid #bbb;
+    height: 22px;
+    margin: 12px 0 6px;
+  }
+
+  /* ── Notice box ── */
+  .notice {
+    background: #f7f7f7;
+    border-left: 3px solid #000;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { padding: 32px 48px; }
+    @page { margin: 0.5in; size: letter; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    ◼ Void Garage Cleaning
+    <span>Professional Garage Cleaning &amp; Junk Removal</span>
+  </div>
+  <div class="doc-title">
+    <h1>Service Agreement &amp; Liability Waiver</h1>
+    <p>Agreement No. ________ &nbsp;·&nbsp; Date: _______________</p>
+  </div>
+</div>
+
+<!-- Client Info -->
+<div class="info-grid">
+  <div class="info-field">
+    <label>Client Full Name</label>
+    <div class="line"></div>
+  </div>
+  <div class="info-field">
+    <label>Phone Number</label>
+    <div class="line"></div>
+  </div>
+  <div class="info-field">
+    <label>Service Address</label>
+    <div class="line"></div>
+  </div>
+  <div class="info-field">
+    <label>Email Address</label>
+    <div class="line"></div>
+  </div>
+  <div class="info-field" style="grid-column:1/-1">
+    <label>City, State, ZIP</label>
+    <div class="line"></div>
+  </div>
+</div>
+
+<!-- Scope of Work -->
+<div class="section">
+  <div class="section-title">1. Scope of Work</div>
+  <p>Void Garage Cleaning ("Contractor") agrees to perform the following services at the address listed above on the agreed service date. The scope is limited to what is described below and does not include any additional services unless separately agreed upon in writing.</p>
+  <div class="scope-box">
+    <div class="scope-row"><span class="scope-label">Service Date</span><div class="scope-value"></div></div>
+    <div class="scope-row"><span class="scope-label">Service(s) Requested</span><div class="scope-value"></div></div>
+    <div class="scope-row"><span class="scope-label">Estimated Duration</span><div class="scope-value"></div></div>
+    <div class="scope-row"><span class="scope-label">Special Instructions</span><div class="scope-value"></div></div>
+  </div>
+</div>
+
+<!-- Payment Terms -->
+<div class="section">
+  <div class="section-title">2. Payment Terms</div>
+  <p><strong>Agreed Total:</strong> $______________ &nbsp;&nbsp; <strong>Deposit (if any):</strong> $______________ &nbsp;&nbsp; <strong>Balance Due:</strong> $______________</p>
+  <p>Payment is due in full upon completion of services unless a deposit arrangement has been agreed upon in writing. Accepted forms of payment: cash, Zelle, Venmo, or card. In the event of non-payment, Client agrees to reimburse Contractor for all reasonable costs of collection, including attorney's fees.</p>
+</div>
+
+<!-- Pre-Existing Conditions -->
+<div class="section">
+  <div class="section-title">3. Pre-Existing Conditions &amp; Property Condition</div>
+  <p>Client acknowledges that Contractor is not responsible for any pre-existing damage, staining, structural weakness, deterioration, or defects to walls, flooring, shelving, fixtures, or any items present at the property prior to the commencement of services.</p>
+  <p>Client agrees that items left in the work area are done so at the Client's own risk. Contractor will exercise reasonable care but assumes no liability for damage to items that are fragile, improperly stored, or in a weakened condition prior to service.</p>
+</div>
+
+<!-- Hazardous Materials -->
+<div class="section">
+  <div class="section-title">4. Hazardous Materials</div>
+  <p>Client represents and warrants that the work area does not contain hazardous materials including but not limited to asbestos, mold, biohazardous waste, chemical agents, or controlled substances. If Contractor discovers or suspects hazardous materials during service, Contractor reserves the right to immediately stop work without penalty or refund obligation. Removal of hazardous materials is explicitly excluded from all services unless separately agreed upon in a written addendum.</p>
+</div>
+
+<!-- Limitation of Liability -->
+<div class="section">
+  <div class="section-title">5. Limitation of Liability</div>
+  <p>To the fullest extent permitted by law, Contractor's total liability to Client for any claim arising out of or related to these services shall not exceed the total amount paid by Client for the services giving rise to such claim. <strong>In no event shall Contractor be liable for indirect, consequential, incidental, punitive, or special damages of any kind.</strong></p>
+  <p>Client agrees that any claim against Contractor must be submitted in writing within <strong>7 days</strong> of the service date. Claims submitted after this period will be deemed waived.</p>
+</div>
+
+<!-- Property Access & Authorization -->
+<div class="section">
+  <div class="section-title">6. Property Access &amp; Authorization</div>
+  <p>Client warrants that they are the legal owner or authorized occupant of the service address and have the legal right to authorize the services described herein. Client grants Contractor and its employees/subcontractors permission to access the property for the purpose of completing the agreed services.</p>
+  <p>If Client is not present during services, Client authorizes Contractor to complete the work as scoped. Any items designated for disposal by the Client will be removed and cannot be recovered once removed from the property.</p>
+</div>
+
+<!-- Cancellation Policy -->
+<div class="section">
+  <div class="section-title">7. Cancellation &amp; Rescheduling</div>
+  <p>Client may cancel or reschedule with at least <strong>48 hours' notice</strong> at no charge. Cancellations with less than 48 hours' notice may result in forfeiture of any deposit paid. Same-day cancellations (within 2 hours of scheduled start) will be charged a cancellation fee of $50 or the deposit amount, whichever is greater. Contractor reserves the right to reschedule due to weather, emergency, or circumstances beyond its control.</p>
+</div>
+
+<!-- Photo & Media Release -->
+<div class="section">
+  <div class="section-title">8. Photo &amp; Media Release</div>
+  <p>Client grants Contractor permission to photograph or record before-and-after conditions of the work area for the purposes of internal records, marketing, and social media. No personally identifiable information (name, address, faces) will be published without separate written consent. Client may opt out by initialing here: ______</p>
+</div>
+
+<!-- Valuable & High-Value Items -->
+<div class="section">
+  <div class="section-title">9. Valuable &amp; High-Value Items</div>
+  <p>Client is solely responsible for removing or securing any items of significant monetary or sentimental value (including but not limited to jewelry, cash, electronics, collectibles, documents, firearms, or irreplaceable personal property) from the work area prior to the commencement of services. <strong>Contractor assumes no liability for any loss, damage, or disposal of items not disclosed and physically separated from the work area before work begins.</strong></p>
+  <p>Client must clearly mark or physically separate any items they wish to keep from items designated for removal. Once items have been removed from the property, they cannot be recovered. Contractor is not responsible for items disposed of in accordance with Client's instructions or as a result of Client's failure to designate items for retention.</p>
+</div>
+
+<!-- Additional Charges -->
+<div class="section">
+  <div class="section-title">10. Additional Charges &amp; Scope Changes</div>
+  <p>The agreed total in Section 2 is based on the scope described at time of booking. If upon arrival or during service Contractor determines that the actual scope of work materially exceeds the original estimate (due to volume, condition, access, or undisclosed items), Contractor will notify Client before proceeding. Additional work beyond the original scope will be charged at <strong>$_______/hr</strong> or a flat rate agreed upon verbally or in writing at that time.</p>
+  <p>Client's verbal or written approval to proceed with additional work constitutes acceptance of additional charges. Contractor is not obligated to complete work beyond the original scope without additional compensation.</p>
+</div>
+
+<!-- No Guarantee of Results -->
+<div class="section">
+  <div class="section-title">11. No Guarantee of Results</div>
+  <p>Contractor will perform services in a professional and workmanlike manner; however, Contractor makes no guarantee of specific results. Outcomes may vary based on the condition of the space, age of stains or odors, structural limitations, and other factors beyond Contractor's control. Contractor is not responsible for: permanent staining, etching, or discoloration of surfaces; odors that cannot be eliminated through standard cleaning; structural damage caused by pre-existing deterioration; or the condition of items following removal or sorting.</p>
+</div>
+
+<!-- Dispute Resolution -->
+<div class="section">
+  <div class="section-title">12. Dispute Resolution &amp; Governing Law</div>
+  <p>Both parties agree to attempt to resolve any dispute informally by contacting the other party in writing first. If a resolution cannot be reached within 14 days, disputes involving claims under $10,000 may be brought in small claims court in the county where services were rendered. Disputes exceeding $10,000 shall be submitted to binding arbitration under the rules of the American Arbitration Association. <strong>Client waives the right to participate in a class action lawsuit against Contractor.</strong> This Agreement shall be governed by the laws of the State of Texas.</p>
+</div>
+
+<!-- Indemnification -->
+<div class="section">
+  <div class="section-title">13. Indemnification</div>
+  <p>Client agrees to indemnify, defend, and hold harmless Contractor, its owners, employees, and subcontractors from and against any and all claims, damages, losses, costs, and expenses (including attorney's fees) arising out of or resulting from: (a) Client's breach of this Agreement; (b) any inaccurate representation made by Client; (c) any pre-existing conditions at the property; or (d) Client's negligence or willful misconduct.</p>
+</div>
+
+<!-- Entire Agreement -->
+<div class="section">
+  <div class="section-title">14. Entire Agreement</div>
+  <p>This Agreement constitutes the entire understanding between the parties with respect to the services described and supersedes all prior discussions, representations, or agreements. Any modifications must be made in writing and signed by both parties. If any provision of this Agreement is found to be unenforceable, the remaining provisions shall remain in full force and effect.</p>
+</div>
+
+<!-- Notice -->
+<div class="notice">
+  <strong>PLEASE READ BEFORE SIGNING.</strong> By signing below, Client acknowledges that they have read, understood, and agree to all terms of this Service Agreement &amp; Liability Waiver. Client acknowledges that this agreement limits Contractor's liability and that Client has had the opportunity to seek independent legal counsel before signing.
+</div>
+
+<!-- Signatures -->
+<div class="section" style="margin-top:28px">
+  <div class="section-title">Signatures</div>
+  <div class="sig-grid">
+
+    <div class="sig-block">
+      <p style="font-size:10px;color:#666;margin-bottom:8px">CLIENT</p>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-name-line"></div>
+      <div class="sig-label">Printed Name</div>
+      <div class="sig-name-line" style="margin-top:12px"></div>
+      <div class="sig-label">Date</div>
+    </div>
+
+    <div class="sig-block">
+      <p style="font-size:10px;color:#666;margin-bottom:8px">VOID GARAGE CLEANING</p>
+      <div class="sig-line"></div>
+      <div class="sig-label">Authorized Signature</div>
+      <div class="sig-name-line"></div>
+      <div class="sig-label">Printed Name</div>
+      <div class="sig-name-line" style="margin-top:12px"></div>
+      <div class="sig-label">Date</div>
+    </div>
+
+  </div>
+</div>
+
+<p style="margin-top:32px;font-size:9px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:12px">
+  Void Garage Cleaning &nbsp;·&nbsp; San Antonio, TX &nbsp;·&nbsp; voidgaragecleaning.com &nbsp;·&nbsp; © 2025 All rights reserved. &nbsp;·&nbsp; This document is a binding legal agreement.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp *)",
+      "PowerShell(claude mcp add magic --scope user --env API_KEY=\"30d512c491b2d1db92f85d3b4246257fe9456fb470374641bef03435742aa212\" -- npx -y \"@21st-dev/magic@latest\")"
+    ]
+  }
+}
