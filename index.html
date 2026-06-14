@@ -1099,6 +1099,7 @@
 
       // 3. after white fully in (1200ms), fade it back out and reveal hero
       setTimeout(() => {
+        document.body.style.overflow = '';
         wh.classList.remove('in');
         wh.classList.add('out');
         revealHero();
@@ -1134,6 +1135,7 @@
       setTimeout(doMobReveal, 2500);
       document.addEventListener('click', doMobReveal, { once: true });
     } else {
+      document.body.style.overflow = 'hidden';
       let revealCalled = false;
       vid.addEventListener('timeupdate', function onNearEnd() {
         if (vid.duration && vid.currentTime >= vid.duration - 1.5 && !revealCalled) {
