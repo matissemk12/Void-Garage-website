@@ -1389,18 +1389,33 @@
     })();
 
     /* ── hiring form ── */
-    document.getElementById('hform').addEventListener('submit', e => {
+    document.getElementById('hform').addEventListener('submit', async e => {
       e.preventDefault();
       const btn = e.target.querySelector('.fsub');
       const txt = document.getElementById('fsub-txt');
-      txt.textContent = 'Sent ✓';
-      btn.style.opacity = '.5';
       btn.disabled = true;
-      setTimeout(() => {
-        txt.textContent = 'Send Application';
+      btn.style.opacity = '.5';
+      txt.textContent = 'Sending…';
+      try {
+        const r = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name:    document.getElementById('fn').value.trim(),
+            contact: document.getElementById('fc').value.trim(),
+            message: document.getElementById('fm').value.trim(),
+          }),
+        });
+        if (!r.ok) throw new Error();
+        txt.textContent = 'Sent ✓';
+        e.target.reset();
+        setTimeout(() => { txt.textContent = 'Send Application'; btn.style.opacity = ''; btn.disabled = false; }, 3000);
+      } catch {
+        txt.textContent = 'Failed — try again';
         btn.style.opacity = '';
         btn.disabled = false;
-      }, 3500);
+        setTimeout(() => { txt.textContent = 'Send Application'; }, 3000);
+      }
     });
   })();
   </script>
