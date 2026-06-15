@@ -4,8 +4,52 @@
   <meta charset="UTF-8">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%23fff' text-anchor='middle'>V</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Void Garage Cleaning</title>
-  <meta name="description" content="Fast, efficient garage cleanouts. Local & independently owned. We don't leave until you're satisfied.">
+  <link rel="canonical" href="https://www.voidgaragecleaning.com">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Void Garage Cleaning",
+    "description": "Professional garage cleanout and junk removal in San Antonio, TX. We haul everything away — no sorting required.",
+    "url": "https://www.voidgaragecleaning.com",
+    "telephone": "+18316575787",
+    "email": "matissemk12@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "San Antonio",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "areaServed": { "@type": "City", "name": "San Antonio" },
+    "priceRange": "$$",
+    "openingHours": "Mo-Su 07:00-20:00",
+    "sameAs": [],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Garage Cleaning Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Garage Cleanout",
+            "description": "Full garage cleanout and junk haul away — $699 per truckload"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Garage Organization",
+            "description": "Add-on organization and shelving setup — $150/hr"
+          }
+        }
+      ]
+    }
+  }
+  </script>
+  <title>Void Garage Cleaning | Garage Cleanout &amp; Junk Removal — San Antonio, TX</title>
+  <meta name="description" content="San Antonio's garage cleanout crew. We haul everything away — no sorting required, no hidden fees. Same-week availability. Call or book online.">
   <!-- Open Graph -->
   <meta property="og:title" content="Void Garage Cleaning — Full Garage Cleanout. Same-Week Availability.">
   <meta property="og:description" content="We haul everything away — you keep what you love. No sorting required, no hidden fees. We don't leave until you're satisfied.">
@@ -770,8 +814,10 @@
       <div id="hero-grain" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-eye" id="he">Local &amp; Independently Owned</div>
-        <div class="hero-disp"><span class="hero-line" id="hl1">Void Garage</span></div>
-        <div class="hero-disp"><span class="hero-line d1" id="hl2">Cleaning.</span></div>
+        <h1 style="display:contents;font:inherit;margin:0;padding:0">
+          <div class="hero-disp"><span class="hero-line" id="hl1">Void Garage</span></div>
+          <div class="hero-disp"><span class="hero-line d1" id="hl2">Cleaning.</span></div>
+        </h1>
         <p class="hero-tag" id="ht">Fast, efficient, and thorough. We haul&nbsp;out the clutter so you don&rsquo;t have to think about&nbsp;it.</p>
         <div class="hero-ctas" id="hc">
           <a href="#book" class="btn-primary">
@@ -1275,6 +1321,13 @@
         btn.addEventListener('click', () => {
           post('events', { event_name: 'book_click', session_id: sid, label: btn.textContent.trim().slice(0,30) });
           if (typeof gtag === 'function') gtag('event','book_click',{button_label: btn.textContent.trim().slice(0,30)});
+        });
+      });
+
+      document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+        a.addEventListener('click', () => {
+          post('events', { event_name: 'phone_click', session_id: sid, label: 'tel_link' });
+          if (typeof gtag === 'function') gtag('event','phone_click');
         });
       });
     })();
