@@ -561,19 +561,21 @@
     display:flex;flex-direction:column;cursor:default;isolation:isolate;
     border:1.5px solid #000;
     background:var(--bg);
-    transition:transform 400ms var(--ease-s);
+    position:relative;overflow:hidden;
+    transition:transform 400ms var(--ease-s),box-shadow 400ms var(--ease-s);
   }
-  .rv-card:hover{background:#fafafa}
+  .rv-card::before{content:'\201C';position:absolute;top:4px;right:18px;font-size:96px;line-height:1;opacity:.05;color:currentColor;font-family:Georgia,serif;pointer-events:none;user-select:none}
+  .rv-card:hover{background:#fafafa;transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.08)}
   .rv-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px}
   .rv-avatar{width:34px;height:34px;border-radius:50%;background:#000;color:#fff;font-family:var(--fb);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .rv-info{display:flex;flex-direction:column;gap:2px}
   .rv-name{font-family:var(--fb);font-size:13px;font-weight:600;color:#000;line-height:1.2}
   .rv-role{font-family:var(--fb);font-size:11px;font-weight:400;color:rgba(0,0,0,.4)}
   .rv-text{font-family:var(--fb);font-size:13px;font-weight:300;line-height:1.75;color:#000;flex:1;margin-bottom:16px}
-  .rv-stars{display:flex;gap:3px;font-size:13px;color:#f59e0b}
+  .rv-stars{display:flex;gap:3px;font-size:13px;color:#f59e0b;margin:10px 0 14px}
   body.dark .rv-label{color:rgba(255,255,255,.35)}
-  body.dark .rv-card{border-color:rgba(255,255,255,.18);background:#161616}
-  body.dark .rv-card:hover{background:#1c1c1c}
+  body.dark .rv-card{border-color:transparent;background:linear-gradient(#161616,#161616) padding-box,linear-gradient(140deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.22) 50%,rgba(255,255,255,.04) 100%) border-box}
+  body.dark .rv-card:hover{background:linear-gradient(#1c1c1c,#1c1c1c) padding-box,linear-gradient(140deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.28) 50%,rgba(255,255,255,.04) 100%) border-box;box-shadow:0 16px 40px rgba(0,0,0,.45)}
   body.dark .rv-avatar{background:#fff;color:#000}
   body.dark .rv-name{color:#fff}
   body.dark .rv-role{color:rgba(255,255,255,.4)}
@@ -931,8 +933,8 @@
                   <span class="rv-role">Homeowner</span>
                 </div>
               </div>
-              <p class="rv-text">Called on a Tuesday, they were out by Thursday. Took a garage that had 15 years of stuff in it down to bare walls. Didn't have to lift a finger.</p>
               <div class="rv-stars">★★★★★</div>
+              <p class="rv-text">Called on a Tuesday, they were out by Thursday. Took a garage that had 15 years of stuff in it down to bare walls. Didn't have to lift a finger.</p>
             </div>
             <div class="rv-card">
               <div class="rv-meta">
@@ -942,8 +944,8 @@
                   <span class="rv-role">Homeowner</span>
                 </div>
               </div>
-              <p class="rv-text">Honestly just glad it's done. Been putting it off for two years. They handled everything and were out in a few hours.</p>
               <div class="rv-stars">★★★★★</div>
+              <p class="rv-text">Honestly just glad it's done. Been putting it off for two years. They handled everything and were out in a few hours.</p>
             </div>
             <div class="rv-card">
               <div class="rv-meta">
@@ -953,8 +955,8 @@
                   <span class="rv-role">Homeowner</span>
                 </div>
               </div>
-              <p class="rv-text">Fair price, showed up on time, no complaints. Would use again.</p>
               <div class="rv-stars">★★★★★</div>
+              <p class="rv-text">Fair price, showed up on time, no complaints. Would use again.</p>
             </div>
             <div class="rv-card">
               <div class="rv-meta">
@@ -964,8 +966,8 @@
                   <span class="rv-role">Homeowner</span>
                 </div>
               </div>
-              <p class="rv-text">We had a full two-car garage packed with junk from a move we never fully unpacked. They cleared it out in one visit. Professional and quick — wish we'd done it sooner.</p>
               <div class="rv-stars">★★★★★</div>
+              <p class="rv-text">We had a full two-car garage packed with junk from a move we never fully unpacked. They cleared it out in one visit. Professional and quick — wish we'd done it sooner.</p>
             </div>
           </div>
         </div>
