@@ -660,6 +660,8 @@
     .nav-link:hover,.nav-link.active{color:#fff!important}
     .nav-link.active{background:rgba(255,255,255,.12)}
     .mob-only{display:inline-flex}
+    h3.mob-only,p.mob-only{display:block}
+    .mob-hide{display:none}
     .hero-ctas{flex-direction:column;align-items:flex-start}
   }
   /* ━━ MOBILE INTRO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -842,8 +844,10 @@
       <div class="process-steps">
         <div class="process-step">
           <span class="step-num">01</span>
-          <h3 class="step-title">Book Online</h3>
-          <p class="step-body">Pick a date through our booking link. Takes under two minutes — no phone tag, no back-and-forth.</p>
+          <h3 class="step-title mob-hide">Book Online</h3>
+          <p class="step-body mob-hide">Pick a date through our booking link. Takes under two minutes — no phone tag, no back-and-forth.</p>
+          <h3 class="step-title mob-only">Call or Text</h3>
+          <p class="step-body mob-only">Send us a text or give us a call. We&rsquo;ll get back to you fast and lock in a date that works.</p>
         </div>
         <div class="process-sep" aria-hidden="true"></div>
         <div class="process-step">
