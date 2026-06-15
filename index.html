@@ -1396,16 +1396,7 @@
           cx = (g / 30) * MOB_STRENGTH;
           cy = (b / 30) * MOB_STRENGTH;
         }
-        if (typeof DeviceOrientationEvent !== 'undefined' &&
-            typeof DeviceOrientationEvent.requestPermission === 'function') {
-          hero.addEventListener('touchstart', function askPerm() {
-            DeviceOrientationEvent.requestPermission()
-              .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation, { passive: true }); })
-              .catch(() => {});
-          }, { once: true });
-        } else {
-          window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-        }
+        window.addEventListener('deviceorientation', handleOrientation, { passive: true });
       }
       (function tick(){
         tx += (cx - tx) * 0.07;
