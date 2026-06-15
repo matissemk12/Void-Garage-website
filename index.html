@@ -487,8 +487,8 @@
   #process{padding:var(--py) var(--px);border-bottom:1px solid var(--rule)}
   .process-label{font-family:var(--fd);font-size:clamp(36px,5vw,72px);font-weight:300;font-style:italic;color:#000;text-align:center;margin:0 0 64px;line-height:1}
   .process-steps{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:0 56px;align-items:start}
-  .process-sep{background:var(--rule);align-self:stretch;transform:scaleY(0);transform-origin:top;transition:transform .7s var(--ease)}
-  .process-sep.v{transform:scaleY(1)}
+  .process-sep{background:currentColor;opacity:0;align-self:stretch;transition:opacity .55s var(--ease)}
+  .process-sep.v{opacity:.18}
   @keyframes step-fade{from{opacity:0}to{opacity:1}}
   .process-step{opacity:0;transform:translateX(-72px);transition:transform 1.7s var(--ease);position:relative;text-align:center;border:1.5px solid #000;padding:48px 36px 40px;border-radius:3px}
   .process-step.v{animation:step-fade 1.7s var(--ease) forwards;transform:none}
@@ -664,8 +664,7 @@
     .mob-only{display:inline-flex}
     h3.mob-only,p.mob-only{display:block}
     .mob-hide{display:none}
-    #mob-pill{display:flex;align-items:center;justify-content:center;position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);right:20px;width:48px;height:48px;background:#000;color:#fff;border:none;border-radius:50%;z-index:998;opacity:0;pointer-events:none;transition:opacity .4s;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.22)}
-    body.dark #mob-pill{background:#fff;color:#000}
+    #mob-pill{display:flex;align-items:center;justify-content:center;position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);right:20px;width:48px;height:48px;min-width:48px;min-height:48px;padding:0;background:rgba(12,12,12,0.82);color:rgba(255,255,255,0.55);border:none;border-radius:50%;z-index:998;opacity:0;pointer-events:none;transition:opacity .4s;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
     body.revealed.scrolled #mob-pill{opacity:1;pointer-events:auto}
     #mob-sheet.open ~ #mob-pill{opacity:0!important;pointer-events:none}
     .hero-ctas{flex-direction:column;align-items:flex-start}
