@@ -845,7 +845,7 @@
         <div class="process-step">
           <span class="step-num">01</span>
           <h3 class="step-title mob-hide">Book Online</h3>
-          <p class="step-body mob-hide">Pick a date through our booking link. Takes under two minutes.</p>
+          <p class="step-body mob-hide">Pick a date through our booking link, or shoot us a call or text. Takes under two minutes.</p>
           <h3 class="step-title mob-only">Call or Text</h3>
           <p class="step-body mob-only">Send us a text or give us a call. We&rsquo;ll get back to you fast and lock in a date that works.</p>
         </div>
@@ -1388,6 +1388,25 @@
         cy = ((e.clientY - r.top)  / r.height - 0.5) * strength;
       });
       hero.addEventListener('mouseleave', () => { cx = 0; cy = 0; });
+      if (window.innerWidth <= 600) {
+        const MOB_STRENGTH = 20;
+        function handleOrientation(e) {
+          const g = Math.max(-30, Math.min(30, e.gamma || 0));
+          const b = Math.max(-30, Math.min(30, (e.beta || 0) - 45));
+          cx = (g / 30) * MOB_STRENGTH;
+          cy = (b / 30) * MOB_STRENGTH;
+        }
+        if (typeof DeviceOrientationEvent !== 'undefined' &&
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+          hero.addEventListener('touchstart', function askPerm() {
+            DeviceOrientationEvent.requestPermission()
+              .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation, { passive: true }); })
+              .catch(() => {});
+          }, { once: true });
+        } else {
+          window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+        }
+      }
       (function tick(){
         tx += (cx - tx) * 0.07;
         ty += (cy - ty) * 0.07;
